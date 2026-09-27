@@ -45,9 +45,7 @@ itself uses a few tens of MB; the extra is for compiling.
 As root in the container:
 
 1. Install git: `apt update && apt install -y git`
-2. Clone the repo into `/opt/src`. It's private, so use a GitHub
-   [personal access token](https://github.com/settings/tokens) with read access
-   to this repo as the password when asked:
+2. Clone the repo:
    `git clone https://github.com/rivers-church/propresenter-toolkit.git /opt/src/propresenter-toolkit`
 3. Run the installer:
    `sh /opt/src/propresenter-toolkit/deploy/install.sh`
