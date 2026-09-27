@@ -65,6 +65,13 @@ func Build(style FontStyle, colorsHex []string, lines []Line) ([]byte, error) {
 		expanded = append(expanded, fmt.Sprintf(`\csgenericrgb\c%d\c%d\c%d\c100000`,
 			round(float64(r)/255*100000), round(float64(g)/255*100000), round(float64(b)/255*100000)))
 	}
+	// ProPresenter always sets a text highlight / background colour; to show
+	// none it points them at a final colour entry with zero alpha. Without
+	// this entry \highlight would pick up a text colour (or a missing one,
+	// which renders black).
+	tbl = append(tbl, `\red255\green255\blue255`)
+	expanded = append(expanded, `\csgenericrgb\c100000\c100000\c100000\c0`)
+	clear := len(tbl) // 1-based index of the transparent entry
 
 	bold := `\b0`
 	if style.Bold {
@@ -72,9 +79,9 @@ func Build(style FontStyle, colorsHex []string, lines []Line) ([]byte, error) {
 	}
 	pard := fmt.Sprintf(`\pard\li0\fi0\ri0\qc\sb0\sa%d\sl%d\slmult1\slleading0`+
 		`\f0%s\i0\ul0\strike0\fs%d\expnd0\expndtw0\CocoaLigature1`+
-		`\cf1\strokewidth0\strokec1\nosupersub\ulc0\highlight2\cb2 `,
+		`\cf1\strokewidth0\strokec1\nosupersub\ulc0\highlight%d\cb%d `,
 		round(style.ParagraphSpacingPt*20), round(style.LineHeightMultiple*240),
-		bold, round(style.SizePt*2))
+		bold, round(style.SizePt*2), clear, clear)
 
 	paragraphs := make([]string, 0, len(lines))
 	for _, line := range lines {

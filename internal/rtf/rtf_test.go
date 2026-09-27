@@ -1,6 +1,7 @@
 package rtf
 
 import (
+	"fmt"
 	"strings"
 	"testing"
 )
@@ -18,17 +19,41 @@ func TestBuild(t *testing.T) {
 	s := string(got)
 	for _, want := range []string{
 		`{\rtf0\ansi\ansicpg1252{\fonttbl\f0\fnil Avenir-Heavy;}`,
-		`{\colortbl;\red255\green255\blue255;\red255\green255\blue0;}`,
+		`{\colortbl;\red255\green255\blue255;\red255\green255\blue0;\red255\green255\blue255;}`,
 		`\csgenericrgb\c100000\c100000\c0\c100000`,
 		`\paperw38400`,
 		`\sa480\sl216\slmult1`,
 		`\f0\b\i0`,
 		`\fs120`,
 		`\cf1 We are \cf2 SAVED\par`,
-		`\cb2 \cf1 by grace}`,
+		`\highlight3\cb3 \cf1 by grace}`,
 	} {
 		if !strings.Contains(s, want) {
 			t.Errorf("RTF missing %q\n%s", want, s)
+		}
+	}
+}
+
+// Regression: \highlight and \cb must point at a fully transparent colour
+// entry. Pointing at a text colour gave every line a yellow highlight in
+// Prompts; pointing past the table rendered a black box in Slides.
+func TestHighlightIsTransparent(t *testing.T) {
+	for _, colors := range [][]string{{"#FFFFFF"}, {"#FFFFFF", "#FFFF00"}} {
+		data, err := Build(testStyle, colors, []Line{{{Text: "x"}}})
+		if err != nil {
+			t.Fatal(err)
+		}
+		s := string(data)
+		n := len(colors) + 1
+		if !strings.Contains(s, fmt.Sprintf(`\highlight%d\cb%d `, n, n)) {
+			t.Errorf("%d colours: highlight should use entry %d\n%s", len(colors), n, s)
+		}
+		// The nth expandedcolortbl entry must have alpha 0.
+		start := strings.Index(s, `{\*\expandedcolortbl;`)
+		end := strings.Index(s[start:], "}")
+		entries := strings.Split(strings.TrimSuffix(s[start+len(`{\*\expandedcolortbl;`):start+end], ";"), ";")
+		if len(entries) != n || !strings.HasSuffix(entries[n-1], `\c0`) {
+			t.Errorf("%d colours: expanded table %q should end with an alpha-0 entry", len(colors), entries)
 		}
 	}
 }
