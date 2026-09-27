@@ -156,9 +156,9 @@ const file_masks_proto_rawDesc = "" +
 	"\x06shapes\x18\x05 \x03(\v2\x19.rv.data.Graphics.ElementR\x06shapes\"*\n" +
 	"\x04Mode\x12\x10\n" +
 	"\fMODE_OVERLAY\x10\x00\x12\x10\n" +
-	"\fMODE_KEYHOLE\x10\x01B\x90\x01\n" +
+	"\fMODE_KEYHOLE\x10\x01B\x91\x01\n" +
 	"\vcom.rv.dataB\n" +
-	"MasksProtoP\x01Z8github.com/thatguycleeb/propresenter-toolkit/internal/pb\xa2\x02\x03RDX\xaa\x02\aRv.Data\xca\x02\aRv\\Data\xe2\x02\x13Rv\\Data\\GPBMetadata\xea\x02\bRv::Datab\x06proto3"
+	"MasksProtoP\x01Z9github.com/rivers-church/propresenter-toolkit/internal/pb\xa2\x02\x03RDX\xaa\x02\aRv.Data\xca\x02\aRv\\Data\xe2\x02\x13Rv\\Data\\GPBMetadata\xea\x02\bRv::Datab\x06proto3"
 
 var (
 	file_masks_proto_rawDescOnce sync.Once

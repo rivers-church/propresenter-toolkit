@@ -894,8 +894,8 @@ const file_effects_proto_rawDesc = "" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x123\n" +
 	"\n" +
 	"transition\x18\x03 \x01(\v2\x13.rv.data.TransitionR\n" +
-	"transitionB\x92\x01\n" +
-	"\vcom.rv.dataB\fEffectsProtoP\x01Z8github.com/thatguycleeb/propresenter-toolkit/internal/pb\xa2\x02\x03RDX\xaa\x02\aRv.Data\xca\x02\aRv\\Data\xe2\x02\x13Rv\\Data\\GPBMetadata\xea\x02\bRv::Datab\x06proto3"
+	"transitionB\x93\x01\n" +
+	"\vcom.rv.dataB\fEffectsProtoP\x01Z9github.com/rivers-church/propresenter-toolkit/internal/pb\xa2\x02\x03RDX\xaa\x02\aRv.Data\xca\x02\aRv\\Data\xe2\x02\x13Rv\\Data\\GPBMetadata\xea\x02\bRv::Datab\x06proto3"
 
 var (
 	file_effects_proto_rawDescOnce sync.Once

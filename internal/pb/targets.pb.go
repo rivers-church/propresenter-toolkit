@@ -274,8 +274,8 @@ const file_targets_proto_rawDesc = "" +
 	"\x0eFLIP_MODE_NONE\x10\x00\x12\x16\n" +
 	"\x12FLIP_MODE_VERTICAL\x10\x01\x12\x18\n" +
 	"\x14FLIP_MODE_HORIZONTAL\x10\x02\x12\x12\n" +
-	"\x0eFLIP_MODE_BOTH\x10\x03B\x92\x01\n" +
-	"\vcom.rv.dataB\fTargetsProtoP\x01Z8github.com/thatguycleeb/propresenter-toolkit/internal/pb\xa2\x02\x03RDX\xaa\x02\aRv.Data\xca\x02\aRv\\Data\xe2\x02\x13Rv\\Data\\GPBMetadata\xea\x02\bRv::Datab\x06proto3"
+	"\x0eFLIP_MODE_BOTH\x10\x03B\x93\x01\n" +
+	"\vcom.rv.dataB\fTargetsProtoP\x01Z9github.com/rivers-church/propresenter-toolkit/internal/pb\xa2\x02\x03RDX\xaa\x02\aRv.Data\xca\x02\aRv\\Data\xe2\x02\x13Rv\\Data\\GPBMetadata\xea\x02\bRv::Datab\x06proto3"
 
 var (
 	file_targets_proto_rawDescOnce sync.Once

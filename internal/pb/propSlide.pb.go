@@ -83,8 +83,8 @@ const file_propSlide_proto_rawDesc = "" +
 	"base_slide\x18\x01 \x01(\v2\x0e.rv.data.SlideR\tbaseSlide\x123\n" +
 	"\n" +
 	"transition\x18\x02 \x01(\v2\x13.rv.data.TransitionR\n" +
-	"transitionB\x94\x01\n" +
-	"\vcom.rv.dataB\x0ePropSlideProtoP\x01Z8github.com/thatguycleeb/propresenter-toolkit/internal/pb\xa2\x02\x03RDX\xaa\x02\aRv.Data\xca\x02\aRv\\Data\xe2\x02\x13Rv\\Data\\GPBMetadata\xea\x02\bRv::Datab\x06proto3"
+	"transitionB\x95\x01\n" +
+	"\vcom.rv.dataB\x0ePropSlideProtoP\x01Z9github.com/rivers-church/propresenter-toolkit/internal/pb\xa2\x02\x03RDX\xaa\x02\aRv.Data\xca\x02\aRv\\Data\xe2\x02\x13Rv\\Data\\GPBMetadata\xea\x02\bRv::Datab\x06proto3"
 
 var (
 	file_propSlide_proto_rawDescOnce sync.Once

@@ -89,8 +89,8 @@ const file_liveVideoPlaylist_proto_rawDesc = "" +
 	"\x11LiveVideoPlaylist\x12)\n" +
 	"\aactions\x18\x01 \x03(\v2\x0f.rv.data.ActionR\aactions\x12=\n" +
 	"\x13targeted_layer_UUID\x18\x02 \x01(\v2\r.rv.data.UUIDR\x11targetedLayerUUID\x12!\n" +
-	"\x04uuid\x18\x03 \x01(\v2\r.rv.data.UUIDR\x04uuidB\x9c\x01\n" +
-	"\vcom.rv.dataB\x16LiveVideoPlaylistProtoP\x01Z8github.com/thatguycleeb/propresenter-toolkit/internal/pb\xa2\x02\x03RDX\xaa\x02\aRv.Data\xca\x02\aRv\\Data\xe2\x02\x13Rv\\Data\\GPBMetadata\xea\x02\bRv::Datab\x06proto3"
+	"\x04uuid\x18\x03 \x01(\v2\r.rv.data.UUIDR\x04uuidB\x9d\x01\n" +
+	"\vcom.rv.dataB\x16LiveVideoPlaylistProtoP\x01Z9github.com/rivers-church/propresenter-toolkit/internal/pb\xa2\x02\x03RDX\xaa\x02\aRv.Data\xca\x02\aRv\\Data\xe2\x02\x13Rv\\Data\\GPBMetadata\xea\x02\bRv::Datab\x06proto3"
 
 var (
 	file_liveVideoPlaylist_proto_rawDescOnce sync.Once

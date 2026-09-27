@@ -12,7 +12,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/thatguycleeb/propresenter-toolkit/internal/pdftext"
+	"github.com/rivers-church/propresenter-toolkit/internal/pdftext"
 )
 
 // DefaultSlideMarker is the word that starts each section of a prompts script.

@@ -110,8 +110,8 @@ const file_templateIdentification_proto_rawDesc = "" +
 	"\n" +
 	"slide_name\x18\x04 \x01(\tR\tslideName\x12\x1f\n" +
 	"\vslide_index\x18\x05 \x01(\rR\n" +
-	"slideIndexB\xa1\x01\n" +
-	"\vcom.rv.dataB\x1bTemplateIdentificationProtoP\x01Z8github.com/thatguycleeb/propresenter-toolkit/internal/pb\xa2\x02\x03RDX\xaa\x02\aRv.Data\xca\x02\aRv\\Data\xe2\x02\x13Rv\\Data\\GPBMetadata\xea\x02\bRv::Datab\x06proto3"
+	"slideIndexB\xa2\x01\n" +
+	"\vcom.rv.dataB\x1bTemplateIdentificationProtoP\x01Z9github.com/rivers-church/propresenter-toolkit/internal/pb\xa2\x02\x03RDX\xaa\x02\aRv.Data\xca\x02\aRv\\Data\xe2\x02\x13Rv\\Data\\GPBMetadata\xea\x02\bRv::Datab\x06proto3"
 
 var (
 	file_templateIdentification_proto_rawDescOnce sync.Once

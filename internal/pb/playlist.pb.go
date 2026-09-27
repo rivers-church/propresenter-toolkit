@@ -1147,8 +1147,8 @@ const file_playlist_proto_rawDesc = "" +
 	"\vlinked_data\x18\x01 \x01(\v2\x15.rv.data.PlaylistItemR\n" +
 	"linkedDataB\n" +
 	"\n" +
-	"\bItemTypeB\x93\x01\n" +
-	"\vcom.rv.dataB\rPlaylistProtoP\x01Z8github.com/thatguycleeb/propresenter-toolkit/internal/pb\xa2\x02\x03RDX\xaa\x02\aRv.Data\xca\x02\aRv\\Data\xe2\x02\x13Rv\\Data\\GPBMetadata\xea\x02\bRv::Datab\x06proto3"
+	"\bItemTypeB\x94\x01\n" +
+	"\vcom.rv.dataB\rPlaylistProtoP\x01Z9github.com/rivers-church/propresenter-toolkit/internal/pb\xa2\x02\x03RDX\xaa\x02\aRv.Data\xca\x02\aRv\\Data\xe2\x02\x13Rv\\Data\\GPBMetadata\xea\x02\bRv::Datab\x06proto3"
 
 var (
 	file_playlist_proto_rawDescOnce sync.Once

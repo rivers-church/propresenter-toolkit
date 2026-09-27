@@ -547,8 +547,8 @@ const file_dmxProfiles_proto_rawDesc = "" +
 	"\vFixtureType\x12\r\n" +
 	"\tWORKSPACE\x10\x00\x12\t\n" +
 	"\x05LAYER\x10\x01B\x12\n" +
-	"\x10layerIndex_oneofB\x96\x01\n" +
-	"\vcom.rv.dataB\x10DmxProfilesProtoP\x01Z8github.com/thatguycleeb/propresenter-toolkit/internal/pb\xa2\x02\x03RDX\xaa\x02\aRv.Data\xca\x02\aRv\\Data\xe2\x02\x13Rv\\Data\\GPBMetadata\xea\x02\bRv::Datab\x06proto3"
+	"\x10layerIndex_oneofB\x97\x01\n" +
+	"\vcom.rv.dataB\x10DmxProfilesProtoP\x01Z9github.com/rivers-church/propresenter-toolkit/internal/pb\xa2\x02\x03RDX\xaa\x02\aRv.Data\xca\x02\aRv\\Data\xe2\x02\x13Rv\\Data\\GPBMetadata\xea\x02\bRv::Datab\x06proto3"
 
 var (
 	file_dmxProfiles_proto_rawDescOnce sync.Once

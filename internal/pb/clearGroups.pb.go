@@ -435,8 +435,8 @@ const file_clearGroups_proto_rawDesc = "" +
 	"\x14ImageTypeExclamation\x10 \"[\n" +
 	"\x12ContentDestination\x12\x1e\n" +
 	"\x1aCONTENT_DESTINATION_GLOBAL\x10\x00\x12%\n" +
-	"!CONTENT_DESTINATION_ANNOUNCEMENTS\x10\x01B\x96\x01\n" +
-	"\vcom.rv.dataB\x10ClearGroupsProtoP\x01Z8github.com/thatguycleeb/propresenter-toolkit/internal/pb\xa2\x02\x03RDX\xaa\x02\aRv.Data\xca\x02\aRv\\Data\xe2\x02\x13Rv\\Data\\GPBMetadata\xea\x02\bRv::Datab\x06proto3"
+	"!CONTENT_DESTINATION_ANNOUNCEMENTS\x10\x01B\x97\x01\n" +
+	"\vcom.rv.dataB\x10ClearGroupsProtoP\x01Z9github.com/rivers-church/propresenter-toolkit/internal/pb\xa2\x02\x03RDX\xaa\x02\aRv.Data\xca\x02\aRv\\Data\xe2\x02\x13Rv\\Data\\GPBMetadata\xea\x02\bRv::Datab\x06proto3"
 
 var (
 	file_clearGroups_proto_rawDescOnce sync.Once

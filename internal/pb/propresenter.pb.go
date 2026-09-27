@@ -221,8 +221,8 @@ const file_propresenter_proto_rawDesc = "" +
 	"\n" +
 	"TYPE_AUDIO\x10\x03\"A\n" +
 	"\x10SettingsDocument\x12-\n" +
-	"\x06labels\x18\x02 \x03(\v2\x15.rv.data.Action.LabelR\x06labelsB\x97\x01\n" +
-	"\vcom.rv.dataB\x11PropresenterProtoP\x01Z8github.com/thatguycleeb/propresenter-toolkit/internal/pb\xa2\x02\x03RDX\xaa\x02\aRv.Data\xca\x02\aRv\\Data\xe2\x02\x13Rv\\Data\\GPBMetadata\xea\x02\bRv::Datab\x06proto3"
+	"\x06labels\x18\x02 \x03(\v2\x15.rv.data.Action.LabelR\x06labelsB\x98\x01\n" +
+	"\vcom.rv.dataB\x11PropresenterProtoP\x01Z9github.com/rivers-church/propresenter-toolkit/internal/pb\xa2\x02\x03RDX\xaa\x02\aRv.Data\xca\x02\aRv\\Data\xe2\x02\x13Rv\\Data\\GPBMetadata\xea\x02\bRv::Datab\x06proto3"
 
 var (
 	file_propresenter_proto_rawDescOnce sync.Once

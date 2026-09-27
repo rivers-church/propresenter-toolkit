@@ -236,9 +236,9 @@ const file_stage_proto_rawDesc = "" +
 	"\alayouts\x18\x02 \x03(\v2\x15.rv.data.Stage.LayoutR\alayouts\x1a\x82\x01\n" +
 	"\x10ScreenAssignment\x126\n" +
 	"\x06screen\x18\x01 \x01(\v2\x1e.rv.data.CollectionElementTypeR\x06screen\x126\n" +
-	"\x06layout\x18\x02 \x01(\v2\x1e.rv.data.CollectionElementTypeR\x06layoutB\x90\x01\n" +
+	"\x06layout\x18\x02 \x01(\v2\x1e.rv.data.CollectionElementTypeR\x06layoutB\x91\x01\n" +
 	"\vcom.rv.dataB\n" +
-	"StageProtoP\x01Z8github.com/thatguycleeb/propresenter-toolkit/internal/pb\xa2\x02\x03RDX\xaa\x02\aRv.Data\xca\x02\aRv\\Data\xe2\x02\x13Rv\\Data\\GPBMetadata\xea\x02\bRv::Datab\x06proto3"
+	"StageProtoP\x01Z9github.com/rivers-church/propresenter-toolkit/internal/pb\xa2\x02\x03RDX\xaa\x02\aRv.Data\xca\x02\aRv\\Data\xe2\x02\x13Rv\\Data\\GPBMetadata\xea\x02\bRv::Datab\x06proto3"
 
 var (
 	file_stage_proto_rawDescOnce sync.Once

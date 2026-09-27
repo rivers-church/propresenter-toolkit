@@ -258,8 +258,8 @@ const file_library_proto_rawDesc = "" +
 	"\x05items\x18\x01 \x03(\v2\x14.rv.data.LibraryItemR\x05itemsB\v\n" +
 	"\tChildType\"-\n" +
 	"\vLibraryItem\x12\x1e\n" +
-	"\x03url\x18\x01 \x01(\v2\f.rv.data.URLR\x03urlB\x92\x01\n" +
-	"\vcom.rv.dataB\fLibraryProtoP\x01Z8github.com/thatguycleeb/propresenter-toolkit/internal/pb\xa2\x02\x03RDX\xaa\x02\aRv.Data\xca\x02\aRv\\Data\xe2\x02\x13Rv\\Data\\GPBMetadata\xea\x02\bRv::Datab\x06proto3"
+	"\x03url\x18\x01 \x01(\v2\f.rv.data.URLR\x03urlB\x93\x01\n" +
+	"\vcom.rv.dataB\fLibraryProtoP\x01Z9github.com/rivers-church/propresenter-toolkit/internal/pb\xa2\x02\x03RDX\xaa\x02\aRv.Data\xca\x02\aRv\\Data\xe2\x02\x13Rv\\Data\\GPBMetadata\xea\x02\bRv::Datab\x06proto3"
 
 var (
 	file_library_proto_rawDescOnce sync.Once

@@ -7728,8 +7728,8 @@ const file_proApi_proto_rawDesc = "" +
 	"\x19IndexOrNameIdentifierPair\x12;\n" +
 	"\x03key\x18\x01 \x01(\v2).rv.data.NetworkAPI.IndexOrNameIdentifierR\x03key\x12?\n" +
 	"\x05value\x18\x02 \x01(\v2).rv.data.NetworkAPI.IndexOrNameIdentifierR\x05valueB\t\n" +
-	"\aCommandB\x91\x01\n" +
-	"\vcom.rv.dataB\vProApiProtoP\x01Z8github.com/thatguycleeb/propresenter-toolkit/internal/pb\xa2\x02\x03RDX\xaa\x02\aRv.Data\xca\x02\aRv\\Data\xe2\x02\x13Rv\\Data\\GPBMetadata\xea\x02\bRv::Datab\x06proto3"
+	"\aCommandB\x92\x01\n" +
+	"\vcom.rv.dataB\vProApiProtoP\x01Z9github.com/rivers-church/propresenter-toolkit/internal/pb\xa2\x02\x03RDX\xaa\x02\aRv.Data\xca\x02\aRv\\Data\xe2\x02\x13Rv\\Data\\GPBMetadata\xea\x02\bRv::Datab\x06proto3"
 
 var (
 	file_proApi_proto_rawDescOnce sync.Once

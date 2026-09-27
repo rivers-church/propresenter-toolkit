@@ -81,8 +81,8 @@ const file_proMask_proto_rawDesc = "" +
 	"\aProMask\x12-\n" +
 	"\n" +
 	"base_slide\x18\x01 \x01(\v2\x0e.rv.data.SlideR\tbaseSlide\x12\x12\n" +
-	"\x04name\x18\x02 \x01(\tR\x04nameB\x92\x01\n" +
-	"\vcom.rv.dataB\fProMaskProtoP\x01Z8github.com/thatguycleeb/propresenter-toolkit/internal/pb\xa2\x02\x03RDX\xaa\x02\aRv.Data\xca\x02\aRv\\Data\xe2\x02\x13Rv\\Data\\GPBMetadata\xea\x02\bRv::Datab\x06proto3"
+	"\x04name\x18\x02 \x01(\tR\x04nameB\x93\x01\n" +
+	"\vcom.rv.dataB\fProMaskProtoP\x01Z9github.com/rivers-church/propresenter-toolkit/internal/pb\xa2\x02\x03RDX\xaa\x02\aRv.Data\xca\x02\aRv\\Data\xe2\x02\x13Rv\\Data\\GPBMetadata\xea\x02\bRv::Datab\x06proto3"
 
 var (
 	file_proMask_proto_rawDescOnce sync.Once

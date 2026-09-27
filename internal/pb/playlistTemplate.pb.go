@@ -126,8 +126,8 @@ const file_playlistTemplate_proto_rawDesc = "" +
 	"\ttemplates\x18\x01 \x03(\v2\".rv.data.PlaylistTemplate.TemplateR\ttemplates\x1a\\\n" +
 	"\bTemplate\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12<\n" +
-	"\x0eplaylist_items\x18\x02 \x03(\v2\x15.rv.data.PlaylistItemR\rplaylistItemsB\x9b\x01\n" +
-	"\vcom.rv.dataB\x15PlaylistTemplateProtoP\x01Z8github.com/thatguycleeb/propresenter-toolkit/internal/pb\xa2\x02\x03RDX\xaa\x02\aRv.Data\xca\x02\aRv\\Data\xe2\x02\x13Rv\\Data\\GPBMetadata\xea\x02\bRv::Datab\x06proto3"
+	"\x0eplaylist_items\x18\x02 \x03(\v2\x15.rv.data.PlaylistItemR\rplaylistItemsB\x9c\x01\n" +
+	"\vcom.rv.dataB\x15PlaylistTemplateProtoP\x01Z9github.com/rivers-church/propresenter-toolkit/internal/pb\xa2\x02\x03RDX\xaa\x02\aRv.Data\xca\x02\aRv\\Data\xe2\x02\x13Rv\\Data\\GPBMetadata\xea\x02\bRv::Datab\x06proto3"
 
 var (
 	file_playlistTemplate_proto_rawDescOnce sync.Once

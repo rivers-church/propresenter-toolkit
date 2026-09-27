@@ -5127,8 +5127,8 @@ const file_proCore_proto_rawDesc = "" +
 	"\x0fLAYER_TYPE_MASK\x10\x01\x12\x13\n" +
 	"\x0fLAYER_TYPE_OVER\x10\x02\x12\x14\n" +
 	"\x10LAYER_TYPE_UNDER\x10\x03B\x0e\n" +
-	"\fAdvancedFillB\x92\x01\n" +
-	"\vcom.rv.dataB\fProCoreProtoP\x01Z8github.com/thatguycleeb/propresenter-toolkit/internal/pb\xa2\x02\x03RDX\xaa\x02\aRv.Data\xca\x02\aRv\\Data\xe2\x02\x13Rv\\Data\\GPBMetadata\xea\x02\bRv::Datab\x06proto3"
+	"\fAdvancedFillB\x93\x01\n" +
+	"\vcom.rv.dataB\fProCoreProtoP\x01Z9github.com/rivers-church/propresenter-toolkit/internal/pb\xa2\x02\x03RDX\xaa\x02\aRv.Data\xca\x02\aRv\\Data\xe2\x02\x13Rv\\Data\\GPBMetadata\xea\x02\bRv::Datab\x06proto3"
 
 var (
 	file_proCore_proto_rawDescOnce sync.Once

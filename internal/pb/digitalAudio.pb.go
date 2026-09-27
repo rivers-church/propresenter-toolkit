@@ -646,8 +646,8 @@ const file_digitalAudio_proto_rawDesc = "" +
 	"\bchannels\x18\x01 \x03(\v2$.rv.data.DigitalAudio.Device.ChannelR\bchannels\x122\n" +
 	"\x03map\x18\x02 \x03(\v2 .rv.data.DigitalAudio.Device.MapR\x03map\x12\"\n" +
 	"\ris_custom_map\x18\x03 \x01(\bR\visCustomMap\x12K\n" +
-	"\x0emaster_channel\x18\x04 \x01(\v2$.rv.data.DigitalAudio.Device.ChannelR\rmasterChannelB\x97\x01\n" +
-	"\vcom.rv.dataB\x11DigitalAudioProtoP\x01Z8github.com/thatguycleeb/propresenter-toolkit/internal/pb\xa2\x02\x03RDX\xaa\x02\aRv.Data\xca\x02\aRv\\Data\xe2\x02\x13Rv\\Data\\GPBMetadata\xea\x02\bRv::Datab\x06proto3"
+	"\x0emaster_channel\x18\x04 \x01(\v2$.rv.data.DigitalAudio.Device.ChannelR\rmasterChannelB\x98\x01\n" +
+	"\vcom.rv.dataB\x11DigitalAudioProtoP\x01Z9github.com/rivers-church/propresenter-toolkit/internal/pb\xa2\x02\x03RDX\xaa\x02\aRv.Data\xca\x02\aRv\\Data\xe2\x02\x13Rv\\Data\\GPBMetadata\xea\x02\bRv::Datab\x06proto3"
 
 var (
 	file_digitalAudio_proto_rawDescOnce sync.Once

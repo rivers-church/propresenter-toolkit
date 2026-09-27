@@ -5584,9 +5584,9 @@ const file_slide_proto_rawDesc = "" +
 	"\x0eTextRevealType\x12\x19\n" +
 	"\x15TEXT_REVEAL_TYPE_NONE\x10\x00\x12\x1b\n" +
 	"\x17TEXT_REVEAL_TYPE_BULLET\x10\x01\x12\x1e\n" +
-	"\x1aTEXT_REVEAL_TYPE_UNDERLINE\x10\x02B\x90\x01\n" +
+	"\x1aTEXT_REVEAL_TYPE_UNDERLINE\x10\x02B\x91\x01\n" +
 	"\vcom.rv.dataB\n" +
-	"SlideProtoP\x01Z8github.com/thatguycleeb/propresenter-toolkit/internal/pb\xa2\x02\x03RDX\xaa\x02\aRv.Data\xca\x02\aRv\\Data\xe2\x02\x13Rv\\Data\\GPBMetadata\xea\x02\bRv::Datab\x06proto3"
+	"SlideProtoP\x01Z9github.com/rivers-church/propresenter-toolkit/internal/pb\xa2\x02\x03RDX\xaa\x02\aRv.Data\xca\x02\aRv\\Data\xe2\x02\x13Rv\\Data\\GPBMetadata\xea\x02\bRv::Datab\x06proto3"
 
 var (
 	file_slide_proto_rawDescOnce sync.Once

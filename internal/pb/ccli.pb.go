@@ -165,8 +165,8 @@ const file_ccli_proto_rawDesc = "" +
 	"\x18DISPLAY_TYPE_FIRST_SLIDE\x10\x00\x12\x1b\n" +
 	"\x17DISPLAY_TYPE_LAST_SLIDE\x10\x01\x12%\n" +
 	"!DISPLAY_TYPE_FIRST_AND_LAST_SLIDE\x10\x02\x12\x1b\n" +
-	"\x17DISPLAY_TYPE_ALL_SLIDES\x10\x03B\x8f\x01\n" +
-	"\vcom.rv.dataB\tCcliProtoP\x01Z8github.com/thatguycleeb/propresenter-toolkit/internal/pb\xa2\x02\x03RDX\xaa\x02\aRv.Data\xca\x02\aRv\\Data\xe2\x02\x13Rv\\Data\\GPBMetadata\xea\x02\bRv::Datab\x06proto3"
+	"\x17DISPLAY_TYPE_ALL_SLIDES\x10\x03B\x90\x01\n" +
+	"\vcom.rv.dataB\tCcliProtoP\x01Z9github.com/rivers-church/propresenter-toolkit/internal/pb\xa2\x02\x03RDX\xaa\x02\aRv.Data\xca\x02\aRv\\Data\xe2\x02\x13Rv\\Data\\GPBMetadata\xea\x02\bRv::Datab\x06proto3"
 
 var (
 	file_ccli_proto_rawDescOnce sync.Once

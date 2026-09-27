@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"testing"
 
-	"github.com/thatguycleeb/propresenter-toolkit/internal/testpdf"
+	"github.com/rivers-church/propresenter-toolkit/internal/testpdf"
 )
 
 func TestReadLines(t *testing.T) {

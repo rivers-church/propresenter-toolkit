@@ -4436,8 +4436,8 @@ const file_action_proto_rawDesc = "" +
 	"\x1dACTION_TYPE_SLIDE_DESTINATION\x10\x16\x12\x15\n" +
 	"\x11ACTION_TYPE_MACRO\x10\x17\x12\x1b\n" +
 	"\x17ACTION_TYPE_CLEAR_GROUP\x10\x18B\x10\n" +
-	"\x0eActionTypeDataB\x91\x01\n" +
-	"\vcom.rv.dataB\vActionProtoP\x01Z8github.com/thatguycleeb/propresenter-toolkit/internal/pb\xa2\x02\x03RDX\xaa\x02\aRv.Data\xca\x02\aRv\\Data\xe2\x02\x13Rv\\Data\\GPBMetadata\xea\x02\bRv::Datab\x06proto3"
+	"\x0eActionTypeDataB\x92\x01\n" +
+	"\vcom.rv.dataB\vActionProtoP\x01Z9github.com/rivers-church/propresenter-toolkit/internal/pb\xa2\x02\x03RDX\xaa\x02\aRv.Data\xca\x02\aRv\\Data\xe2\x02\x13Rv\\Data\\GPBMetadata\xea\x02\bRv::Datab\x06proto3"
 
 var (
 	file_action_proto_rawDescOnce sync.Once

@@ -594,8 +594,8 @@ const file_hotKey_proto_rawDesc = "" +
 	"\x17KEY_CODE_JIS_UNDERSCORE\x10r\x12\x1d\n" +
 	"\x19KEY_CODE_JIS_KEYPAD_COMMA\x10s\x12\x15\n" +
 	"\x11KEY_CODE_JIS_EISU\x10t\x12\x15\n" +
-	"\x11KEY_CODE_JIS_KANA\x10uB\x91\x01\n" +
-	"\vcom.rv.dataB\vHotKeyProtoP\x01Z8github.com/thatguycleeb/propresenter-toolkit/internal/pb\xa2\x02\x03RDX\xaa\x02\aRv.Data\xca\x02\aRv\\Data\xe2\x02\x13Rv\\Data\\GPBMetadata\xea\x02\bRv::Datab\x06proto3"
+	"\x11KEY_CODE_JIS_KANA\x10uB\x92\x01\n" +
+	"\vcom.rv.dataB\vHotKeyProtoP\x01Z9github.com/rivers-church/propresenter-toolkit/internal/pb\xa2\x02\x03RDX\xaa\x02\aRv.Data\xca\x02\aRv\\Data\xe2\x02\x13Rv\\Data\\GPBMetadata\xea\x02\bRv::Datab\x06proto3"
 
 var (
 	file_hotKey_proto_rawDescOnce sync.Once

@@ -938,8 +938,8 @@ const file_layers_proto_rawDesc = "" +
 	"\x0eBLEND_MODE_HUE\x10\x17\x12\x19\n" +
 	"\x15BLEND_MODE_SATURATION\x10\x18\x12\x14\n" +
 	"\x10BLEND_MODE_COLOR\x10\x19\x12\x19\n" +
-	"\x15BLEND_MODE_LUMINOSITY\x10\x1aB\x91\x01\n" +
-	"\vcom.rv.dataB\vLayersProtoP\x01Z8github.com/thatguycleeb/propresenter-toolkit/internal/pb\xa2\x02\x03RDX\xaa\x02\aRv.Data\xca\x02\aRv\\Data\xe2\x02\x13Rv\\Data\\GPBMetadata\xea\x02\bRv::Datab\x06proto3"
+	"\x15BLEND_MODE_LUMINOSITY\x10\x1aB\x92\x01\n" +
+	"\vcom.rv.dataB\vLayersProtoP\x01Z9github.com/rivers-church/propresenter-toolkit/internal/pb\xa2\x02\x03RDX\xaa\x02\aRv.Data\xca\x02\aRv\\Data\xe2\x02\x13Rv\\Data\\GPBMetadata\xea\x02\bRv::Datab\x06proto3"
 
 var (
 	file_layers_proto_rawDescOnce sync.Once

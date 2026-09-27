@@ -5971,8 +5971,8 @@ const file_graphicsData_proto_rawDesc = "" +
 	"\x18WebContentTypeProperties\x12:\n" +
 	"\adrawing\x18\x01 \x01(\v2 .rv.data.Media.DrawingPropertiesR\adrawing\x12\x1e\n" +
 	"\x03url\x18\x02 \x01(\v2\f.rv.data.URLR\x03urlB\x10\n" +
-	"\x0eTypePropertiesB\x97\x01\n" +
-	"\vcom.rv.dataB\x11GraphicsDataProtoP\x01Z8github.com/thatguycleeb/propresenter-toolkit/internal/pb\xa2\x02\x03RDX\xaa\x02\aRv.Data\xca\x02\aRv\\Data\xe2\x02\x13Rv\\Data\\GPBMetadata\xea\x02\bRv::Datab\x06proto3"
+	"\x0eTypePropertiesB\x98\x01\n" +
+	"\vcom.rv.dataB\x11GraphicsDataProtoP\x01Z9github.com/rivers-church/propresenter-toolkit/internal/pb\xa2\x02\x03RDX\xaa\x02\aRv.Data\xca\x02\aRv\\Data\xe2\x02\x13Rv\\Data\\GPBMetadata\xea\x02\bRv::Datab\x06proto3"
 
 var (
 	file_graphicsData_proto_rawDescOnce sync.Once

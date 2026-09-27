@@ -8,10 +8,10 @@ import (
 	"github.com/google/uuid"
 	"google.golang.org/protobuf/proto"
 
-	"github.com/thatguycleeb/propresenter-toolkit/internal/parse"
-	"github.com/thatguycleeb/propresenter-toolkit/internal/pb"
-	"github.com/thatguycleeb/propresenter-toolkit/internal/rtf"
-	"github.com/thatguycleeb/propresenter-toolkit/internal/style"
+	"github.com/rivers-church/propresenter-toolkit/internal/parse"
+	"github.com/rivers-church/propresenter-toolkit/internal/pb"
+	"github.com/rivers-church/propresenter-toolkit/internal/rtf"
+	"github.com/rivers-church/propresenter-toolkit/internal/style"
 )
 
 const zeroUUID = "00000000-0000-0000-0000-000000000000"

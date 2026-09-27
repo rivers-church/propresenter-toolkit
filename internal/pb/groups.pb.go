@@ -162,8 +162,8 @@ const file_groups_proto_rawDesc = "" +
 	"\x1capplication_group_identifier\x18\x05 \x01(\v2\r.rv.data.UUIDR\x1aapplicationGroupIdentifier\x124\n" +
 	"\x16application_group_name\x18\x06 \x01(\tR\x14applicationGroupName\";\n" +
 	"\x11ProGroupsDocument\x12&\n" +
-	"\x06groups\x18\x01 \x03(\v2\x0e.rv.data.GroupR\x06groupsB\x91\x01\n" +
-	"\vcom.rv.dataB\vGroupsProtoP\x01Z8github.com/thatguycleeb/propresenter-toolkit/internal/pb\xa2\x02\x03RDX\xaa\x02\aRv.Data\xca\x02\aRv\\Data\xe2\x02\x13Rv\\Data\\GPBMetadata\xea\x02\bRv::Datab\x06proto3"
+	"\x06groups\x18\x01 \x03(\v2\x0e.rv.data.GroupR\x06groupsB\x92\x01\n" +
+	"\vcom.rv.dataB\vGroupsProtoP\x01Z9github.com/rivers-church/propresenter-toolkit/internal/pb\xa2\x02\x03RDX\xaa\x02\aRv.Data\xca\x02\aRv\\Data\xe2\x02\x13Rv\\Data\\GPBMetadata\xea\x02\bRv::Datab\x06proto3"
 
 var (
 	file_groups_proto_rawDescOnce sync.Once

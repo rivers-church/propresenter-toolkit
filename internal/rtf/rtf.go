@@ -10,7 +10,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/thatguycleeb/propresenter-toolkit/internal/pb"
+	"github.com/rivers-church/propresenter-toolkit/internal/pb"
 )
 
 // FontStyle is the font/paragraph parameters read back from a template

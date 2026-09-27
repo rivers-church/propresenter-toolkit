@@ -162,8 +162,8 @@ const file_macros_proto_rawDesc = "" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12$\n" +
 	"\x05color\x18\x03 \x01(\v2\x0e.rv.data.ColorR\x05color\x12)\n" +
 	"\aactions\x18\x04 \x03(\v2\x0f.rv.data.ActionR\aactions\x12,\n" +
-	"\x12trigger_on_startup\x18\x05 \x01(\bR\x10triggerOnStartupB\x91\x01\n" +
-	"\vcom.rv.dataB\vMacrosProtoP\x01Z8github.com/thatguycleeb/propresenter-toolkit/internal/pb\xa2\x02\x03RDX\xaa\x02\aRv.Data\xca\x02\aRv\\Data\xe2\x02\x13Rv\\Data\\GPBMetadata\xea\x02\bRv::Datab\x06proto3"
+	"\x12trigger_on_startup\x18\x05 \x01(\bR\x10triggerOnStartupB\x92\x01\n" +
+	"\vcom.rv.dataB\vMacrosProtoP\x01Z9github.com/rivers-church/propresenter-toolkit/internal/pb\xa2\x02\x03RDX\xaa\x02\aRv.Data\xca\x02\aRv\\Data\xe2\x02\x13Rv\\Data\\GPBMetadata\xea\x02\bRv::Datab\x06proto3"
 
 var (
 	file_macros_proto_rawDescOnce sync.Once

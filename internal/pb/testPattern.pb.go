@@ -387,8 +387,8 @@ const file_testPattern_proto_rawDesc = "" +
 	"\x10TYPE_BLACK_COLOR\x10\x05\x12\x14\n" +
 	"\x10TYPE_WHITE_COLOR\x10\x06\x12\x15\n" +
 	"\x11TYPE_CUSTOM_COLOR\x10\aB\x13\n" +
-	"\x11PatternPropertiesB\x96\x01\n" +
-	"\vcom.rv.dataB\x10TestPatternProtoP\x01Z8github.com/thatguycleeb/propresenter-toolkit/internal/pb\xa2\x02\x03RDX\xaa\x02\aRv.Data\xca\x02\aRv\\Data\xe2\x02\x13Rv\\Data\\GPBMetadata\xea\x02\bRv::Datab\x06proto3"
+	"\x11PatternPropertiesB\x97\x01\n" +
+	"\vcom.rv.dataB\x10TestPatternProtoP\x01Z9github.com/rivers-church/propresenter-toolkit/internal/pb\xa2\x02\x03RDX\xaa\x02\aRv.Data\xca\x02\aRv\\Data\xe2\x02\x13Rv\\Data\\GPBMetadata\xea\x02\bRv::Datab\x06proto3"
 
 var (
 	file_testPattern_proto_rawDescOnce sync.Once

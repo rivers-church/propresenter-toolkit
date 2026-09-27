@@ -138,8 +138,8 @@ const file_alignmentGuide_proto_rawDesc = "" +
 	"\blocation\x18\x03 \x01(\x01R\blocation\"`\n" +
 	"\x14GuidelineOrientation\x12$\n" +
 	" GUIDELINE_ORIENTATION_HORIZONTAL\x10\x00\x12\"\n" +
-	"\x1eGUIDELINE_ORIENTATION_VERTICAL\x10\x01B\x99\x01\n" +
-	"\vcom.rv.dataB\x13AlignmentGuideProtoP\x01Z8github.com/thatguycleeb/propresenter-toolkit/internal/pb\xa2\x02\x03RDX\xaa\x02\aRv.Data\xca\x02\aRv\\Data\xe2\x02\x13Rv\\Data\\GPBMetadata\xea\x02\bRv::Datab\x06proto3"
+	"\x1eGUIDELINE_ORIENTATION_VERTICAL\x10\x01B\x9a\x01\n" +
+	"\vcom.rv.dataB\x13AlignmentGuideProtoP\x01Z9github.com/rivers-church/propresenter-toolkit/internal/pb\xa2\x02\x03RDX\xaa\x02\aRv.Data\xca\x02\aRv\\Data\xe2\x02\x13Rv\\Data\\GPBMetadata\xea\x02\bRv::Datab\x06proto3"
 
 var (
 	file_alignmentGuide_proto_rawDescOnce sync.Once

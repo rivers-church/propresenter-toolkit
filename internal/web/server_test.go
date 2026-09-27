@@ -13,10 +13,10 @@ import (
 
 	"google.golang.org/protobuf/proto"
 
-	"github.com/thatguycleeb/propresenter-toolkit/internal/pb"
-	"github.com/thatguycleeb/propresenter-toolkit/internal/pro"
-	"github.com/thatguycleeb/propresenter-toolkit/internal/style"
-	"github.com/thatguycleeb/propresenter-toolkit/internal/testpdf"
+	"github.com/rivers-church/propresenter-toolkit/internal/pb"
+	"github.com/rivers-church/propresenter-toolkit/internal/pro"
+	"github.com/rivers-church/propresenter-toolkit/internal/style"
+	"github.com/rivers-church/propresenter-toolkit/internal/testpdf"
 )
 
 func newTestServer(t *testing.T, cfg Config) (*httptest.Server, *http.Client) {

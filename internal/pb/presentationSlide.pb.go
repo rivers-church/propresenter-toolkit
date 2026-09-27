@@ -168,8 +168,8 @@ const file_presentationSlide_proto_rawDesc = "" +
 	"\brtf_data\x18\x01 \x01(\fR\artfData\x12A\n" +
 	"\n" +
 	"attributes\x18\x02 \x01(\v2!.rv.data.Graphics.Text.AttributesR\n" +
-	"attributesB\x9c\x01\n" +
-	"\vcom.rv.dataB\x16PresentationSlideProtoP\x01Z8github.com/thatguycleeb/propresenter-toolkit/internal/pb\xa2\x02\x03RDX\xaa\x02\aRv.Data\xca\x02\aRv\\Data\xe2\x02\x13Rv\\Data\\GPBMetadata\xea\x02\bRv::Datab\x06proto3"
+	"attributesB\x9d\x01\n" +
+	"\vcom.rv.dataB\x16PresentationSlideProtoP\x01Z9github.com/rivers-church/propresenter-toolkit/internal/pb\xa2\x02\x03RDX\xaa\x02\aRv.Data\xca\x02\aRv\\Data\xe2\x02\x13Rv\\Data\\GPBMetadata\xea\x02\bRv::Datab\x06proto3"
 
 var (
 	file_presentationSlide_proto_rawDescOnce sync.Once

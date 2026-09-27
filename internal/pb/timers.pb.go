@@ -822,8 +822,8 @@ const file_timers_proto_rawDesc = "" +
 	"\x0eTimersDocument\x12C\n" +
 	"\x10application_info\x18\x01 \x01(\v2\x18.rv.data.ApplicationInfoR\x0fapplicationInfo\x12$\n" +
 	"\x05clock\x18\x02 \x01(\v2\x0e.rv.data.ClockR\x05clock\x12&\n" +
-	"\x06timers\x18\x03 \x03(\v2\x0e.rv.data.TimerR\x06timersB\x91\x01\n" +
-	"\vcom.rv.dataB\vTimersProtoP\x01Z8github.com/thatguycleeb/propresenter-toolkit/internal/pb\xa2\x02\x03RDX\xaa\x02\aRv.Data\xca\x02\aRv\\Data\xe2\x02\x13Rv\\Data\\GPBMetadata\xea\x02\bRv::Datab\x06proto3"
+	"\x06timers\x18\x03 \x03(\v2\x0e.rv.data.TimerR\x06timersB\x92\x01\n" +
+	"\vcom.rv.dataB\vTimersProtoP\x01Z9github.com/rivers-church/propresenter-toolkit/internal/pb\xa2\x02\x03RDX\xaa\x02\aRv.Data\xca\x02\aRv\\Data\xe2\x02\x13Rv\\Data\\GPBMetadata\xea\x02\bRv::Datab\x06proto3"
 
 var (
 	file_timers_proto_rawDescOnce sync.Once

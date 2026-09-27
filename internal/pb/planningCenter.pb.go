@@ -637,8 +637,8 @@ const file_planningCenter_proto_rawDesc = "" +
 	"\x13PLAN_ITEM_TYPE_ITEM\x10\x00\x12\x17\n" +
 	"\x13PLAN_ITEM_TYPE_SONG\x10\x01\x12\x18\n" +
 	"\x14PLAN_ITEM_TYPE_MEDIA\x10\x02\x12\x19\n" +
-	"\x15PLAN_ITEM_TYPE_HEADER\x10\x03B\x99\x01\n" +
-	"\vcom.rv.dataB\x13PlanningCenterProtoP\x01Z8github.com/thatguycleeb/propresenter-toolkit/internal/pb\xa2\x02\x03RDX\xaa\x02\aRv.Data\xca\x02\aRv\\Data\xe2\x02\x13Rv\\Data\\GPBMetadata\xea\x02\bRv::Datab\x06proto3"
+	"\x15PLAN_ITEM_TYPE_HEADER\x10\x03B\x9a\x01\n" +
+	"\vcom.rv.dataB\x13PlanningCenterProtoP\x01Z9github.com/rivers-church/propresenter-toolkit/internal/pb\xa2\x02\x03RDX\xaa\x02\aRv.Data\xca\x02\aRv\\Data\xe2\x02\x13Rv\\Data\\GPBMetadata\xea\x02\bRv::Datab\x06proto3"
 
 var (
 	file_planningCenter_proto_rawDescOnce sync.Once

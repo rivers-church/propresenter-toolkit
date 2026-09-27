@@ -4,7 +4,7 @@ managed:
   enabled: true
   override:
     - file_option: go_package
-      value: github.com/thatguycleeb/propresenter-toolkit/internal/pb
+      value: github.com/rivers-church/propresenter-toolkit/internal/pb
 plugins:
   - local: protoc-gen-go
     out: internal/pb

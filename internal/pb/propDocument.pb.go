@@ -91,8 +91,8 @@ const file_propDocument_proto_rawDesc = "" +
 	"\x04cues\x18\x02 \x03(\v2\f.rv.data.CueR\x04cues\x123\n" +
 	"\n" +
 	"transition\x18\x03 \x01(\v2\x13.rv.data.TransitionR\n" +
-	"transitionB\x97\x01\n" +
-	"\vcom.rv.dataB\x11PropDocumentProtoP\x01Z8github.com/thatguycleeb/propresenter-toolkit/internal/pb\xa2\x02\x03RDX\xaa\x02\aRv.Data\xca\x02\aRv\\Data\xe2\x02\x13Rv\\Data\\GPBMetadata\xea\x02\bRv::Datab\x06proto3"
+	"transitionB\x98\x01\n" +
+	"\vcom.rv.dataB\x11PropDocumentProtoP\x01Z9github.com/rivers-church/propresenter-toolkit/internal/pb\xa2\x02\x03RDX\xaa\x02\aRv.Data\xca\x02\aRv\\Data\xe2\x02\x13Rv\\Data\\GPBMetadata\xea\x02\bRv::Datab\x06proto3"
 
 var (
 	file_propDocument_proto_rawDescOnce sync.Once

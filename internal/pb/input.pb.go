@@ -657,9 +657,9 @@ const file_input_proto_rawDesc = "" +
 	"\x06AutoOn\x12.\n" +
 	"\x13linked_video_inputs\x18\x01 \x03(\rR\x11linkedVideoInputsB\x06\n" +
 	"\x04ModeB\b\n" +
-	"\x06SourceB\x90\x01\n" +
+	"\x06SourceB\x91\x01\n" +
 	"\vcom.rv.dataB\n" +
-	"InputProtoP\x01Z8github.com/thatguycleeb/propresenter-toolkit/internal/pb\xa2\x02\x03RDX\xaa\x02\aRv.Data\xca\x02\aRv\\Data\xe2\x02\x13Rv\\Data\\GPBMetadata\xea\x02\bRv::Datab\x06proto3"
+	"InputProtoP\x01Z9github.com/rivers-church/propresenter-toolkit/internal/pb\xa2\x02\x03RDX\xaa\x02\aRv.Data\xca\x02\aRv\\Data\xe2\x02\x13Rv\\Data\\GPBMetadata\xea\x02\bRv::Datab\x06proto3"
 
 var (
 	file_input_proto_rawDescOnce sync.Once

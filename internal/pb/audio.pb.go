@@ -664,9 +664,9 @@ const file_audio_proto_rawDesc = "" +
 	"\vsolo_enable\x18\x03 \x01(\bR\n" +
 	"soloEnable\x12\x1f\n" +
 	"\vtone_enable\x18\x04 \x01(\bR\n" +
-	"toneEnableB\x90\x01\n" +
+	"toneEnableB\x91\x01\n" +
 	"\vcom.rv.dataB\n" +
-	"AudioProtoP\x01Z8github.com/thatguycleeb/propresenter-toolkit/internal/pb\xa2\x02\x03RDX\xaa\x02\aRv.Data\xca\x02\aRv\\Data\xe2\x02\x13Rv\\Data\\GPBMetadata\xea\x02\bRv::Datab\x06proto3"
+	"AudioProtoP\x01Z9github.com/rivers-church/propresenter-toolkit/internal/pb\xa2\x02\x03RDX\xaa\x02\aRv.Data\xca\x02\aRv\\Data\xe2\x02\x13Rv\\Data\\GPBMetadata\xea\x02\bRv::Datab\x06proto3"
 
 var (
 	file_audio_proto_rawDescOnce sync.Once

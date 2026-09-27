@@ -4,11 +4,11 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/thatguycleeb/propresenter-toolkit/internal/parse"
-	"github.com/thatguycleeb/propresenter-toolkit/internal/pb"
-	"github.com/thatguycleeb/propresenter-toolkit/internal/pdftext"
-	"github.com/thatguycleeb/propresenter-toolkit/internal/rtf"
-	"github.com/thatguycleeb/propresenter-toolkit/internal/style"
+	"github.com/rivers-church/propresenter-toolkit/internal/parse"
+	"github.com/rivers-church/propresenter-toolkit/internal/pb"
+	"github.com/rivers-church/propresenter-toolkit/internal/pdftext"
+	"github.com/rivers-church/propresenter-toolkit/internal/rtf"
+	"github.com/rivers-church/propresenter-toolkit/internal/style"
 )
 
 func defaultStyle(t *testing.T, kind style.Kind) *style.Profile {

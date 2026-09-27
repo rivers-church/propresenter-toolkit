@@ -1318,8 +1318,8 @@ const file_basicTypes_proto_rawDesc = "" +
 	"\n" +
 	"MusicScale\x12\x15\n" +
 	"\x11MUSIC_SCALE_MAJOR\x10\x00\x12\x15\n" +
-	"\x11MUSIC_SCALE_MINOR\x10\x01B\x95\x01\n" +
-	"\vcom.rv.dataB\x0fBasicTypesProtoP\x01Z8github.com/thatguycleeb/propresenter-toolkit/internal/pb\xa2\x02\x03RDX\xaa\x02\aRv.Data\xca\x02\aRv\\Data\xe2\x02\x13Rv\\Data\\GPBMetadata\xea\x02\bRv::Datab\x06proto3"
+	"\x11MUSIC_SCALE_MINOR\x10\x01B\x96\x01\n" +
+	"\vcom.rv.dataB\x0fBasicTypesProtoP\x01Z9github.com/rivers-church/propresenter-toolkit/internal/pb\xa2\x02\x03RDX\xaa\x02\aRv.Data\xca\x02\aRv\\Data\xe2\x02\x13Rv\\Data\\GPBMetadata\xea\x02\bRv::Datab\x06proto3"
 
 var (
 	file_basicTypes_proto_rawDescOnce sync.Once

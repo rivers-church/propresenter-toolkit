@@ -71,8 +71,8 @@ const file_labels_proto_rawDesc = "" +
 	"\n" +
 	"\flabels.proto\x12\arv.data\x1a\faction.proto\"B\n" +
 	"\x11ProLabelsDocument\x12-\n" +
-	"\x06labels\x18\x01 \x03(\v2\x15.rv.data.Action.LabelR\x06labelsB\x91\x01\n" +
-	"\vcom.rv.dataB\vLabelsProtoP\x01Z8github.com/thatguycleeb/propresenter-toolkit/internal/pb\xa2\x02\x03RDX\xaa\x02\aRv.Data\xca\x02\aRv\\Data\xe2\x02\x13Rv\\Data\\GPBMetadata\xea\x02\bRv::Datab\x06proto3"
+	"\x06labels\x18\x01 \x03(\v2\x15.rv.data.Action.LabelR\x06labelsB\x92\x01\n" +
+	"\vcom.rv.dataB\vLabelsProtoP\x01Z9github.com/rivers-church/propresenter-toolkit/internal/pb\xa2\x02\x03RDX\xaa\x02\aRv.Data\xca\x02\aRv\\Data\xe2\x02\x13Rv\\Data\\GPBMetadata\xea\x02\bRv::Datab\x06proto3"
 
 var (
 	file_labels_proto_rawDescOnce sync.Once

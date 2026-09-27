@@ -774,8 +774,8 @@ const file_messages_proto_rawDesc = "" +
 	"\x17CLEAR_TYPE_AFTER_TIMERS\x10\x02\"\x84\x01\n" +
 	"\x0fMessageDocument\x12C\n" +
 	"\x10application_info\x18\x01 \x01(\v2\x18.rv.data.ApplicationInfoR\x0fapplicationInfo\x12,\n" +
-	"\bmessages\x18\x02 \x03(\v2\x10.rv.data.MessageR\bmessagesB\x93\x01\n" +
-	"\vcom.rv.dataB\rMessagesProtoP\x01Z8github.com/thatguycleeb/propresenter-toolkit/internal/pb\xa2\x02\x03RDX\xaa\x02\aRv.Data\xca\x02\aRv\\Data\xe2\x02\x13Rv\\Data\\GPBMetadata\xea\x02\bRv::Datab\x06proto3"
+	"\bmessages\x18\x02 \x03(\v2\x10.rv.data.MessageR\bmessagesB\x94\x01\n" +
+	"\vcom.rv.dataB\rMessagesProtoP\x01Z9github.com/rivers-church/propresenter-toolkit/internal/pb\xa2\x02\x03RDX\xaa\x02\aRv.Data\xca\x02\aRv\\Data\xe2\x02\x13Rv\\Data\\GPBMetadata\xea\x02\bRv::Datab\x06proto3"
 
 var (
 	file_messages_proto_rawDescOnce sync.Once

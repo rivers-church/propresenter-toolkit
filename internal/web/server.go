@@ -23,10 +23,10 @@ import (
 	"sync"
 	"time"
 
-	"github.com/thatguycleeb/propresenter-toolkit/internal/convert"
-	"github.com/thatguycleeb/propresenter-toolkit/internal/pb"
-	"github.com/thatguycleeb/propresenter-toolkit/internal/pro"
-	"github.com/thatguycleeb/propresenter-toolkit/internal/style"
+	"github.com/rivers-church/propresenter-toolkit/internal/convert"
+	"github.com/rivers-church/propresenter-toolkit/internal/pb"
+	"github.com/rivers-church/propresenter-toolkit/internal/pro"
+	"github.com/rivers-church/propresenter-toolkit/internal/style"
 )
 
 //go:embed templates/*.html static/*

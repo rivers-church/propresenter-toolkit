@@ -872,8 +872,8 @@ const file_recording_proto_rawDesc = "" +
 	"\x14destination_group_id\x18\x01 \x01(\v2\r.rv.data.UUIDR\x12destinationGroupId\x12;\n" +
 	"\x12encoder_profile_id\x18\x02 \x01(\v2\r.rv.data.UUIDR\x10encoderProfileIdB\r\n" +
 	"\vDestinationB\b\n" +
-	"\x06SourceB\x94\x01\n" +
-	"\vcom.rv.dataB\x0eRecordingProtoP\x01Z8github.com/thatguycleeb/propresenter-toolkit/internal/pb\xa2\x02\x03RDX\xaa\x02\aRv.Data\xca\x02\aRv\\Data\xe2\x02\x13Rv\\Data\\GPBMetadata\xea\x02\bRv::Datab\x06proto3"
+	"\x06SourceB\x95\x01\n" +
+	"\vcom.rv.dataB\x0eRecordingProtoP\x01Z9github.com/rivers-church/propresenter-toolkit/internal/pb\xa2\x02\x03RDX\xaa\x02\aRv.Data\xca\x02\aRv\\Data\xe2\x02\x13Rv\\Data\\GPBMetadata\xea\x02\bRv::Datab\x06proto3"
 
 var (
 	file_recording_proto_rawDescOnce sync.Once

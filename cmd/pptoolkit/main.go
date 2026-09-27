@@ -21,10 +21,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/thatguycleeb/propresenter-toolkit/internal/convert"
-	"github.com/thatguycleeb/propresenter-toolkit/internal/pro"
-	"github.com/thatguycleeb/propresenter-toolkit/internal/style"
-	"github.com/thatguycleeb/propresenter-toolkit/internal/web"
+	"github.com/rivers-church/propresenter-toolkit/internal/convert"
+	"github.com/rivers-church/propresenter-toolkit/internal/pro"
+	"github.com/rivers-church/propresenter-toolkit/internal/style"
+	"github.com/rivers-church/propresenter-toolkit/internal/web"
 )
 
 // version is set at build time with -ldflags "-X main.version=v1.2.3".

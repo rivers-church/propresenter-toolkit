@@ -172,8 +172,8 @@ const file_proworkspace_proto_rawDesc = "" +
 	"\x13digital_audio_setup\x18\n" +
 	" \x01(\v2\x1b.rv.data.DigitalAudio.SetupR\x11digitalAudioSetup\x126\n" +
 	"\faudio_inputs\x18\v \x03(\v2\x13.rv.data.AudioInputR\vaudioInputs\x12=\n" +
-	"\x1baudio_input_transition_time\x18\f \x01(\x01R\x18audioInputTransitionTimeB\x97\x01\n" +
-	"\vcom.rv.dataB\x11ProworkspaceProtoP\x01Z8github.com/thatguycleeb/propresenter-toolkit/internal/pb\xa2\x02\x03RDX\xaa\x02\aRv.Data\xca\x02\aRv\\Data\xe2\x02\x13Rv\\Data\\GPBMetadata\xea\x02\bRv::Datab\x06proto3"
+	"\x1baudio_input_transition_time\x18\f \x01(\x01R\x18audioInputTransitionTimeB\x98\x01\n" +
+	"\vcom.rv.dataB\x11ProworkspaceProtoP\x01Z9github.com/rivers-church/propresenter-toolkit/internal/pb\xa2\x02\x03RDX\xaa\x02\aRv.Data\xca\x02\aRv\\Data\xe2\x02\x13Rv\\Data\\GPBMetadata\xea\x02\bRv::Datab\x06proto3"
 
 var (
 	file_proworkspace_proto_rawDescOnce sync.Once

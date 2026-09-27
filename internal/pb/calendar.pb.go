@@ -468,8 +468,8 @@ const file_calendar_proto_rawDesc = "" +
 	"\x15DAY_OF_WEEK_WEDNESDAY\x10\x04\x12\x18\n" +
 	"\x14DAY_OF_WEEK_THURSDAY\x10\x05\x12\x16\n" +
 	"\x12DAY_OF_WEEK_FRIDAY\x10\x06\x12\x18\n" +
-	"\x14DAY_OF_WEEK_SATURDAY\x10\aB\x93\x01\n" +
-	"\vcom.rv.dataB\rCalendarProtoP\x01Z8github.com/thatguycleeb/propresenter-toolkit/internal/pb\xa2\x02\x03RDX\xaa\x02\aRv.Data\xca\x02\aRv\\Data\xe2\x02\x13Rv\\Data\\GPBMetadata\xea\x02\bRv::Datab\x06proto3"
+	"\x14DAY_OF_WEEK_SATURDAY\x10\aB\x94\x01\n" +
+	"\vcom.rv.dataB\rCalendarProtoP\x01Z9github.com/rivers-church/propresenter-toolkit/internal/pb\xa2\x02\x03RDX\xaa\x02\aRv.Data\xca\x02\aRv\\Data\xe2\x02\x13Rv\\Data\\GPBMetadata\xea\x02\bRv::Datab\x06proto3"
 
 var (
 	file_calendar_proto_rawDescOnce sync.Once

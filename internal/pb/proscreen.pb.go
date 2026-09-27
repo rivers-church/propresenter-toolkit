@@ -403,8 +403,8 @@ const file_proscreen_proto_rawDesc = "" +
 	"\x13SCREEN_TYPE_UNKNOWN\x10\x00\x12\x18\n" +
 	"\x14SCREEN_TYPE_AUDIENCE\x10\x01\x12\x15\n" +
 	"\x11SCREEN_TYPE_STAGE\x10\x02B\r\n" +
-	"\vArrangementB\x94\x01\n" +
-	"\vcom.rv.dataB\x0eProscreenProtoP\x01Z8github.com/thatguycleeb/propresenter-toolkit/internal/pb\xa2\x02\x03RDX\xaa\x02\aRv.Data\xca\x02\aRv\\Data\xe2\x02\x13Rv\\Data\\GPBMetadata\xea\x02\bRv::Datab\x06proto3"
+	"\vArrangementB\x95\x01\n" +
+	"\vcom.rv.dataB\x0eProscreenProtoP\x01Z9github.com/rivers-church/propresenter-toolkit/internal/pb\xa2\x02\x03RDX\xaa\x02\aRv.Data\xca\x02\aRv\\Data\xe2\x02\x13Rv\\Data\\GPBMetadata\xea\x02\bRv::Datab\x06proto3"
 
 var (
 	file_proscreen_proto_rawDescOnce sync.Once

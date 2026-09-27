@@ -182,8 +182,8 @@ const file_template_proto_rawDesc = "" +
 	"\aactions\x18\x03 \x03(\v2\x0f.rv.data.ActionR\aactions\x1a\x80\x01\n" +
 	"\bDocument\x12C\n" +
 	"\x10application_info\x18\x01 \x01(\v2\x18.rv.data.ApplicationInfoR\x0fapplicationInfo\x12/\n" +
-	"\x06slides\x18\x03 \x03(\v2\x17.rv.data.Template.SlideR\x06slidesB\x93\x01\n" +
-	"\vcom.rv.dataB\rTemplateProtoP\x01Z8github.com/thatguycleeb/propresenter-toolkit/internal/pb\xa2\x02\x03RDX\xaa\x02\aRv.Data\xca\x02\aRv\\Data\xe2\x02\x13Rv\\Data\\GPBMetadata\xea\x02\bRv::Datab\x06proto3"
+	"\x06slides\x18\x03 \x03(\v2\x17.rv.data.Template.SlideR\x06slidesB\x94\x01\n" +
+	"\vcom.rv.dataB\rTemplateProtoP\x01Z9github.com/rivers-church/propresenter-toolkit/internal/pb\xa2\x02\x03RDX\xaa\x02\aRv.Data\xca\x02\aRv\\Data\xe2\x02\x13Rv\\Data\\GPBMetadata\xea\x02\bRv::Datab\x06proto3"
 
 var (
 	file_template_proto_rawDescOnce sync.Once

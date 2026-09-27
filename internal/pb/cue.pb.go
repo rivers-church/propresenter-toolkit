@@ -390,8 +390,8 @@ const file_cue_proto_rawDesc = "" +
 	"\x1cCOMPLETION_ACTION_TYPE_FIRST\x10\x00\x12\x1f\n" +
 	"\x1bCOMPLETION_ACTION_TYPE_LAST\x10\x01\x12'\n" +
 	"#COMPLETION_ACTION_TYPE_AFTER_ACTION\x10\x02\x12%\n" +
-	"!COMPLETION_ACTION_TYPE_AFTER_TIME\x10\x03B\x8e\x01\n" +
-	"\vcom.rv.dataB\bCueProtoP\x01Z8github.com/thatguycleeb/propresenter-toolkit/internal/pb\xa2\x02\x03RDX\xaa\x02\aRv.Data\xca\x02\aRv\\Data\xe2\x02\x13Rv\\Data\\GPBMetadata\xea\x02\bRv::Datab\x06proto3"
+	"!COMPLETION_ACTION_TYPE_AFTER_TIME\x10\x03B\x8f\x01\n" +
+	"\vcom.rv.dataB\bCueProtoP\x01Z9github.com/rivers-church/propresenter-toolkit/internal/pb\xa2\x02\x03RDX\xaa\x02\aRv.Data\xca\x02\aRv\\Data\xe2\x02\x13Rv\\Data\\GPBMetadata\xea\x02\bRv::Datab\x06proto3"
 
 var (
 	file_cue_proto_rawDescOnce sync.Once

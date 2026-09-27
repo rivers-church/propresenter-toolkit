@@ -3867,8 +3867,8 @@ const file_proApiV1BasicTypes_proto_rawDesc = "" +
 	"\x05stage\x10\x01\"Z\n" +
 	"\x0fAPI_v1_PropData\x12*\n" +
 	"\x02id\x18\x01 \x01(\v2\x1a.rv.data.API_v1_IdentifierR\x02id\x12\x1b\n" +
-	"\tis_active\x18\x02 \x01(\bR\bisActiveB\x9d\x01\n" +
-	"\vcom.rv.dataB\x17ProApiV1BasicTypesProtoP\x01Z8github.com/thatguycleeb/propresenter-toolkit/internal/pb\xa2\x02\x03RDX\xaa\x02\aRv.Data\xca\x02\aRv\\Data\xe2\x02\x13Rv\\Data\\GPBMetadata\xea\x02\bRv::Datab\x06proto3"
+	"\tis_active\x18\x02 \x01(\bR\bisActiveB\x9e\x01\n" +
+	"\vcom.rv.dataB\x17ProApiV1BasicTypesProtoP\x01Z9github.com/rivers-church/propresenter-toolkit/internal/pb\xa2\x02\x03RDX\xaa\x02\aRv.Data\xca\x02\aRv\\Data\xe2\x02\x13Rv\\Data\\GPBMetadata\xea\x02\bRv::Datab\x06proto3"
 
 var (
 	file_proApiV1BasicTypes_proto_rawDescOnce sync.Once

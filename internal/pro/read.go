@@ -8,9 +8,9 @@ import (
 
 	"google.golang.org/protobuf/proto"
 
-	"github.com/thatguycleeb/propresenter-toolkit/internal/pb"
-	"github.com/thatguycleeb/propresenter-toolkit/internal/rtf"
-	"github.com/thatguycleeb/propresenter-toolkit/internal/style"
+	"github.com/rivers-church/propresenter-toolkit/internal/pb"
+	"github.com/rivers-church/propresenter-toolkit/internal/rtf"
+	"github.com/rivers-church/propresenter-toolkit/internal/style"
 )
 
 // Parse decodes a .pro file.

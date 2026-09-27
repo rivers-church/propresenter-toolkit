@@ -21,7 +21,7 @@ import (
 
 	"google.golang.org/protobuf/proto"
 
-	"github.com/thatguycleeb/propresenter-toolkit/internal/pb"
+	"github.com/rivers-church/propresenter-toolkit/internal/pb"
 )
 
 // Kind is the conversion mode a style is for.

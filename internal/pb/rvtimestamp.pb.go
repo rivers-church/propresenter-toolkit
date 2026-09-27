@@ -80,8 +80,8 @@ const file_rvtimestamp_proto_rawDesc = "" +
 	"\x11rvtimestamp.proto\x12\arv.data\";\n" +
 	"\tTimestamp\x12\x18\n" +
 	"\aseconds\x18\x01 \x01(\x03R\aseconds\x12\x14\n" +
-	"\x05nanos\x18\x02 \x01(\x05R\x05nanosB\x96\x01\n" +
-	"\vcom.rv.dataB\x10RvtimestampProtoP\x01Z8github.com/thatguycleeb/propresenter-toolkit/internal/pb\xa2\x02\x03RDX\xaa\x02\aRv.Data\xca\x02\aRv\\Data\xe2\x02\x13Rv\\Data\\GPBMetadata\xea\x02\bRv::Datab\x06proto3"
+	"\x05nanos\x18\x02 \x01(\x05R\x05nanosB\x97\x01\n" +
+	"\vcom.rv.dataB\x10RvtimestampProtoP\x01Z9github.com/rivers-church/propresenter-toolkit/internal/pb\xa2\x02\x03RDX\xaa\x02\aRv.Data\xca\x02\aRv\\Data\xe2\x02\x13Rv\\Data\\GPBMetadata\xea\x02\bRv::Datab\x06proto3"
 
 var (
 	file_rvtimestamp_proto_rawDescOnce sync.Once

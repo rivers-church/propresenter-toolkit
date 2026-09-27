@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/thatguycleeb/propresenter-toolkit/internal/pdftext"
+	"github.com/rivers-church/propresenter-toolkit/internal/pdftext"
 )
 
 func line(words string, bold ...string) pdftext.Line {

@@ -1,4 +1,4 @@
-module github.com/thatguycleeb/propresenter-toolkit
+module github.com/rivers-church/propresenter-toolkit
 
 go 1.26.5
 

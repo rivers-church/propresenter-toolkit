@@ -468,8 +468,8 @@ const file_keymapping_proto_rawDesc = "" +
 	"\x10application_info\x18\x01 \x01(\v2\x18.rv.data.ApplicationInfoR\x0fapplicationInfo\x125\n" +
 	"\vkeymappings\x18\x02 \x03(\v2\x13.rv.data.KeyMappingR\vkeymappings\x12@\n" +
 	"\x11macos_keymappings\x18\x03 \x03(\v2\x13.rv.data.KeyMappingR\x10macosKeymappings\x12D\n" +
-	"\x13windows_keymappings\x18\x04 \x03(\v2\x13.rv.data.KeyMappingR\x12windowsKeymappingsB\x95\x01\n" +
-	"\vcom.rv.dataB\x0fKeymappingProtoP\x01Z8github.com/thatguycleeb/propresenter-toolkit/internal/pb\xa2\x02\x03RDX\xaa\x02\aRv.Data\xca\x02\aRv\\Data\xe2\x02\x13Rv\\Data\\GPBMetadata\xea\x02\bRv::Datab\x06proto3"
+	"\x13windows_keymappings\x18\x04 \x03(\v2\x13.rv.data.KeyMappingR\x12windowsKeymappingsB\x96\x01\n" +
+	"\vcom.rv.dataB\x0fKeymappingProtoP\x01Z9github.com/rivers-church/propresenter-toolkit/internal/pb\xa2\x02\x03RDX\xaa\x02\aRv.Data\xca\x02\aRv\\Data\xe2\x02\x13Rv\\Data\\GPBMetadata\xea\x02\bRv::Datab\x06proto3"
 
 var (
 	file_keymapping_proto_rawDescOnce sync.Once

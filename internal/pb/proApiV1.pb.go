@@ -28035,8 +28035,8 @@ const file_proApiV1_proto_rawDesc = "" +
 	"\x06inputs\x18\x01 \x03(\v2\x1a.rv.data.API_v1_IdentifierR\x06inputs\x1a\t\n" +
 	"\aTriggerB\t\n" +
 	"\aRequestB\t\n" +
-	"\aCommandB\x93\x01\n" +
-	"\vcom.rv.dataB\rProApiV1ProtoP\x01Z8github.com/thatguycleeb/propresenter-toolkit/internal/pb\xa2\x02\x03RDX\xaa\x02\aRv.Data\xca\x02\aRv\\Data\xe2\x02\x13Rv\\Data\\GPBMetadata\xea\x02\bRv::Datab\x06proto3"
+	"\aCommandB\x94\x01\n" +
+	"\vcom.rv.dataB\rProApiV1ProtoP\x01Z9github.com/rivers-church/propresenter-toolkit/internal/pb\xa2\x02\x03RDX\xaa\x02\aRv.Data\xca\x02\aRv\\Data\xe2\x02\x13Rv\\Data\\GPBMetadata\xea\x02\bRv::Datab\x06proto3"
 
 var (
 	file_proApiV1_proto_rawDescOnce sync.Once
