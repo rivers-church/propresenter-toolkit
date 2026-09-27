@@ -1,5 +1,11 @@
 # ProPresenter Toolkit
 
+![AI-assisted](https://img.shields.io/badge/AI--assisted-Claude-8A2BE2)
+
+> **AI-assisted project:** this code was written with the help of an AI
+> assistant (Anthropic's Claude), under human direction and review. Commits
+> with AI involvement carry a `Co-Authored-By: Claude` trailer.
+
 Turns sermon-notes PDFs into ready-to-open **ProPresenter 7 `.pro` files**, in a
 style you define once from your own real show files.
 
