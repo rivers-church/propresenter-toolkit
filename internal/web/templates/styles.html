@@ -1,0 +1,33 @@
+{{define "content"}}
+<h1>Styles</h1>
+<p class="lede">A style is a few real slides copied out of one of your own <code>.pro</code> files, so generated slides keep the exact font, box, background and look.</p>
+
+<p><a class="button primary" href="/styles/new">New style from a .pro file</a></p>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Name</th><th>Kind</th><th>Templates</th><th>Audience Looks</th><th></th></tr></thead>
+  <tbody>
+    {{range .Data.Styles}}
+    <tr>
+      <td><strong>{{.Name}}</strong></td>
+      <td>{{.Kind}}</td>
+      <td>{{join .Roles ", "}}</td>
+      <td>{{range $role, $look := .Settings.AudienceLooks}}<span class="tag">{{$role}}: {{$look.Name}}</span> {{else}}—{{end}}</td>
+      <td class="row-actions">
+        <a class="button small" href="/styles/download?name={{.Name}}">Download</a>
+        <form method="post" action="/styles/delete" onsubmit="return this.querySelector('[name=confirm]').checked || (this.querySelector('.confirm').hidden = false, false)">
+          <input type="hidden" name="name" value="{{.Name}}">
+          <span class="confirm" hidden><label><input type="checkbox" name="confirm"> sure?</label></span>
+          <button class="small danger" type="submit">Delete</button>
+        </form>
+      </td>
+    </tr>
+    {{else}}
+    <tr><td colspan="5">No styles yet.</td></tr>
+    {{end}}
+  </tbody>
+</table>
+</div>
+<p class="muted">Styles are stored as JSON files in <code>{{.Data.Dir}}</code>.</p>
+{{end}}

@@ -1,0 +1,4 @@
+* text=auto eol=lf
+*.exe binary
+*.pro binary
+*.pdf binary

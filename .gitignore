@@ -1,0 +1,13 @@
+# build output
+/pptoolkit
+*.exe
+/dist/
+
+# local dev
+/.dev-styles/
+/.claude/
+/_scratch/
+
+# never commit real sermon material by accident
+*.pdf
+*.pro

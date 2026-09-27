@@ -1,0 +1,59 @@
+{{define "content"}}
+{{$token := .Data.Token}}
+{{$buttons := .Data.Buttons}}
+<h1>New style · step 2</h1>
+<p class="lede">From <strong>{{.Data.File}}</strong>. For each role, click its button on the slide that should be copied.
+  Any Audience Look already attached to that slide is captured too.</p>
+
+<div class="status">
+  {{range .Data.Status}}
+  <div class="pill {{if .Have}}ok{{end}}">
+    <strong>{{.Label}}</strong>
+    {{if .Have}}slide {{.Cue}}{{if .Look}} · look “{{.Look}}”{{else if not .LookOnly}} · no look{{end}}{{else}}not picked{{if .LookOnly}} (optional){{end}}{{end}}
+  </div>
+  {{end}}
+</div>
+
+<form class="card save" method="post" action="/styles/new/{{$token}}/save">
+  <div class="field">
+    <label for="name">Style name</label>
+    <input id="name" type="text" name="name" required>
+  </div>
+  <div class="field inline">
+    <label>Text colour <input type="color" name="regular_color" value="{{.Data.Regular}}"></label>
+    {{if eq .Data.Kind "prompts"}}
+    <label>Highlight colour (bold words) <input type="color" name="emphasis_color" value="{{.Data.Emphasis}}"></label>
+    <label><input type="checkbox" name="keep_caps"> Keep the template's forced ALL CAPS</label>
+    {{end}}
+    <label><input type="checkbox" name="overwrite"> Replace an existing style with this name</label>
+  </div>
+  <button class="primary" type="submit">Save style</button>
+</form>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>#</th><th>Slide</th><th>Text</th><th>Boxes</th><th>Look</th><th>Use as…</th></tr></thead>
+  <tbody>
+    {{range .Data.Cues}}
+    {{$idx := .Index}}
+    <tr>
+      <td class="num">{{inc .Index}}</td>
+      <td>{{.Name}}{{if .Label}}<br><small class="muted">{{.Label}}</small>{{end}}</td>
+      <td>{{.Preview}}</td>
+      <td class="num">{{.Elements}}</td>
+      <td>{{if .Look}}{{.Look.Name}}{{else}}—{{end}}</td>
+      <td class="row-actions">
+        {{range $buttons}}
+        <form method="post" action="/styles/new/{{$token}}/capture">
+          <input type="hidden" name="cue" value="{{$idx}}">
+          <input type="hidden" name="role" value="{{.Role}}">
+          <button class="small" type="submit">{{.Label}}</button>
+        </form>
+        {{end}}
+      </td>
+    </tr>
+    {{end}}
+  </tbody>
+</table>
+</div>
+{{end}}

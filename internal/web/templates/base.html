@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{.Title}} · ProPresenter Toolkit</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header class="top">
+    <div class="wrap top-inner">
+      <a class="brand" href="/">ProPresenter Toolkit</a>
+      <nav>
+        <a href="/" {{if eq .Nav "convert"}}class="on"{{end}}>Convert</a>
+        <a href="/styles" {{if eq .Nav "styles"}}class="on"{{end}}>Style Manager</a>
+      </nav>
+    </div>
+  </header>
+  <main class="wrap">
+    {{range .Flash}}<div class="flash">{{.}}</div>{{end}}
+    {{template "content" .}}
+  </main>
+  <footer class="wrap foot">PDF → ProPresenter 7 .pro{{if .Version}} · {{.Version}}{{end}}</footer>
+</body>
+</html>

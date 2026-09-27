@@ -1,0 +1,51 @@
+{{define "content"}}
+<h1>Convert a PDF</h1>
+<p class="lede">Upload sermon notes, check what was found, then download a ready-to-open <code>.pro</code> file.</p>
+
+<form class="card" method="post" action="/convert" enctype="multipart/form-data">
+  <fieldset class="modes">
+    <legend>What kind of PDF is it?</legend>
+    <label class="mode">
+      <input type="radio" name="mode" value="prompts" checked>
+      <span><strong>Prompts</strong><small>A running script split into <code>SLIDE 1:</code>, <code>SLIDE 2:</code> … Bold words get highlighted.</small></span>
+    </label>
+    <label class="mode">
+      <input type="radio" name="mode" value="slides">
+      <span><strong>Slides</strong><small>A labelled outline: <code>Title:</code>, <code>POINT 1:</code>, scripture, <code>Back to … when I say:</code></small></span>
+    </label>
+  </fieldset>
+
+  <div class="field" data-mode="prompts">
+    <label for="style_prompts">Style</label>
+    <select id="style_prompts" name="style_prompts">
+      {{range .Data.PromptsStyles}}<option>{{.}}</option>{{else}}<option value="">(no prompts styles yet)</option>{{end}}
+    </select>
+  </div>
+  <div class="field" data-mode="slides" hidden>
+    <label for="style_slides">Style</label>
+    <select id="style_slides" name="style_slides">
+      {{range .Data.SlidesStyles}}<option>{{.}}</option>{{else}}<option value="">(no slides styles yet)</option>{{end}}
+    </select>
+  </div>
+
+  <div class="field">
+    <label for="name">Presentation name</label>
+    <input id="name" type="text" name="name" value="My Message">
+  </div>
+  <div class="field">
+    <label for="pdf">PDF file</label>
+    <input id="pdf" type="file" name="pdf" accept="application/pdf,.pdf" required>
+  </div>
+  <button class="primary" type="submit">Read PDF</button>
+</form>
+
+<script>
+  const radios = document.querySelectorAll('input[name=mode]');
+  function sync() {
+    const mode = document.querySelector('input[name=mode]:checked').value;
+    document.querySelectorAll('[data-mode]').forEach(el => el.hidden = el.dataset.mode !== mode);
+  }
+  radios.forEach(r => r.addEventListener('change', sync));
+  sync();
+</script>
+{{end}}

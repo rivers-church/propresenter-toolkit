@@ -1,0 +1,22 @@
+{{define "content"}}
+<h1>New style · step 1</h1>
+<p class="lede">Pick an existing show file that already looks the way you want.</p>
+<form class="card" method="post" action="/styles/new" enctype="multipart/form-data">
+  <fieldset class="modes">
+    <legend>Kind of style</legend>
+    <label class="mode">
+      <input type="radio" name="kind" value="prompts" checked>
+      <span><strong>Prompts</strong><small>One “body” slide: a single text box that holds the running script.</small></span>
+    </label>
+    <label class="mode">
+      <input type="radio" name="kind" value="slides">
+      <span><strong>Slides</strong><small>Title, Point, Keyword (Condition/Driven lines) and Scripture slides.</small></span>
+    </label>
+  </fieldset>
+  <div class="field">
+    <label for="pro">Example .pro file</label>
+    <input id="pro" type="file" name="pro" accept=".pro" required>
+  </div>
+  <button class="primary" type="submit">List its slides</button>
+</form>
+{{end}}
