@@ -1,9 +1,0 @@
-.git/
-.github/
-.claude/
-_scratch/
-.dev-styles/
-dist/
-*.exe
-*.pro
-*.pdf

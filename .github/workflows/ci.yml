@@ -3,45 +3,46 @@ name: CI
 on:
   push:
     branches: [main]
-    tags: ["v*"]
   pull_request:
 
 permissions:
-  contents: write # needed to publish releases on tags
+  contents: read
 
 jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
+      - uses: actions/checkout@v5
+      - uses: actions/setup-go@v6
         with:
           go-version-file: go.mod
       - name: Check formatting
         run: test -z "$(gofmt -l . | tee /dev/stderr)"
       - run: go vet ./...
       - run: go test -race ./...
+      - name: Check the install script parses
+        run: sh -n deploy/install.sh
 
-  release:
-    if: startsWith(github.ref, 'refs/tags/v')
-    needs: test
+  # Runs the real installer on a fresh machine (systemd + apt, like a Debian
+  # LXC), checks the service answers, then re-runs it as an update would.
+  install:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
+      - uses: actions/checkout@v5
         with:
-          go-version-file: go.mod
-      - name: Build binaries
+          fetch-depth: 0
+      - name: Install
+        run: sudo sh deploy/install.sh
+      - name: Service responds
         run: |
-          mkdir -p dist
-          for target in windows/amd64 linux/amd64 linux/arm64 darwin/amd64 darwin/arm64; do
-            os=${target%/*}; arch=${target#*/}
-            ext=""; [ "$os" = windows ] && ext=".exe"
-            CGO_ENABLED=0 GOOS=$os GOARCH=$arch go build -trimpath \
-              -ldflags "-s -w -X main.version=${GITHUB_REF_NAME}" \
-              -o "dist/pptoolkit-$os-$arch$ext" ./cmd/pptoolkit
-          done
-      - name: Publish release
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: gh release create "$GITHUB_REF_NAME" dist/* --generate-notes --title "$GITHUB_REF_NAME"
+          curl -fsS http://127.0.0.1:5000/ | grep -q "Convert a PDF"
+          curl -fsS http://127.0.0.1:5000/styles | grep -q "Message (Prompts)"
+      - name: Re-run (update) keeps settings
+        run: |
+          echo 'PPT_AUTH=team:secret' | sudo tee -a /etc/propresenter-toolkit.env
+          sudo sh deploy/install.sh
+          test "$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:5000/)" = 401
+          curl -fsS -u team:secret http://127.0.0.1:5000/ | grep -q "Convert a PDF"
+      - name: Logs
+        if: always()
+        run: sudo journalctl -u propresenter-toolkit --no-pager | tail -50
