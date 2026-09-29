@@ -59,7 +59,23 @@ The installer:
 - writes settings to `/etc/propresenter-toolkit.env` (first run only);
 - keeps styles in `/var/lib/propresenter-toolkit/styles`, seeded with two example styles.
 
-It prints the address when it's done, e.g. `http://192.168.1.50:5000`.
+It prints the address when it's done, e.g. `http://192.168.1.50`. The app
+listens on port 80, so no `:port` is needed.
+
+### A friendly address
+
+1. Give the container a fixed IP, either as a static IP in Proxmox or a
+   DHCP reservation.
+2. In your DNS server, add an **A record** for a name, e.g. `propresenter`,
+   pointing at that IP. On Windows Server: DNS Manager → your zone → New
+   Host (A).
+
+Everyone using that DNS server can then open `http://propresenter.<your-domain>`.
+Nothing else is needed; a PTR (reverse) record is optional.
+
+With no DNS server of your own, install `avahi-daemon` in the container
+instead. It then answers at `http://<container-hostname>.local` on Macs,
+iPhones and Windows 10/11.
 
 ### Settings
 
@@ -68,7 +84,7 @@ Edit `/etc/propresenter-toolkit.env`, then run
 
 | Setting | Default | |
 |---|---|---|
-| `PPT_ADDR` | `:5000` | address and port to listen on |
+| `PPT_ADDR` | `:80` | address and port to listen on |
 | `PPT_STYLES_DIR` | `/var/lib/propresenter-toolkit/styles` | style profiles folder |
 | `PPT_AUTH` | *(empty)* | `user:password` to require a login |
 

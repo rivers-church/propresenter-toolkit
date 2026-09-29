@@ -98,8 +98,8 @@ if [ ! -f "$ENV_FILE" ]; then
 # ProPresenter Toolkit settings. After editing:
 #   systemctl restart $APP
 
-# Address and port to listen on.
-PPT_ADDR=:5000
+# Address and port to listen on. Port 80 means the address needs no ":port".
+PPT_ADDR=:80
 
 # Where style profiles are kept (back this folder up).
 PPT_STYLES_DIR=$DATA_DIR/styles
@@ -110,6 +110,12 @@ PPT_AUTH=
 EOF
   chmod 0640 "$ENV_FILE"
   chgrp "$APP" "$ENV_FILE"
+elif grep -qx 'PPT_ADDR=:5000' "$ENV_FILE"; then
+  # Older installs defaulted to port 5000; move them to 80. A port you set
+  # yourself is left alone.
+  say "Moving from port 5000 to 80 (edit PPT_ADDR in $ENV_FILE to change)"
+  sed -i 's/^PPT_ADDR=:5000$/PPT_ADDR=:80/' "$ENV_FILE"
+  sed -i 's/^# Address and port to listen on\.$/# Address and port to listen on. Port 80 means the address needs no ":port"./' "$ENV_FILE"
 fi
 
 # --- service ------------------------------------------------------------------
@@ -128,6 +134,10 @@ ExecStart=$INSTALL_DIR/pptoolkit
 Restart=on-failure
 RestartSec=3
 
+# Allow binding ports below 1024 (e.g. 80) without running as root; this
+# is the only privilege the service gets.
+AmbientCapabilities=CAP_NET_BIND_SERVICE
+CapabilityBoundingSet=CAP_NET_BIND_SERVICE
 NoNewPrivileges=true
 ProtectSystem=strict
 ProtectHome=true
@@ -146,7 +156,10 @@ sleep 1
 if systemctl is-active --quiet "$APP"; then
   port="$(sed -n 's/^PPT_ADDR=.*:\([0-9]*\)$/\1/p' "$ENV_FILE")"
   ip="$(hostname -I 2>/dev/null | awk '{print $1}')"
-  say "Done - running $VERSION at http://${ip:-<this-container-ip>}:${port:-5000}"
+  suffix=":${port:-80}"
+  [ "$suffix" = ":80" ] && suffix=""
+  say "Done - running $VERSION at http://${ip:-<this-container-ip>}$suffix"
+  echo "(or at the name you gave it in DNS)"
   echo "Settings: $ENV_FILE"
   echo "Styles:   $DATA_DIR/styles"
   echo "Logs:     journalctl -u $APP -f"
