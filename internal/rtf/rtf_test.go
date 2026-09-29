@@ -58,6 +58,26 @@ func TestHighlightIsTransparent(t *testing.T) {
 	}
 }
 
+func TestBuildItalicAndHighlight(t *testing.T) {
+	got, err := Build(testStyle, []string{"#FFFFFF", "#000000"}, []Line{{
+		{Text: "Daniel"},
+		{Text: "Then", Italic: true, SpaceBefore: true},
+		{Text: "the", Italic: true, SpaceBefore: true},
+		{Text: "STOP", Color: 1, Highlight: 1, SpaceBefore: true},
+		{Text: "end", SpaceBefore: true},
+	}})
+	if err != nil {
+		t.Fatal(err)
+	}
+	want := `\cf1 Daniel \i Then the \i0\cf2\highlight1\cb1 STOP \cf1\highlight3\cb3 end}`
+	// Control words may come in any order, so compare the pieces we care about.
+	for _, piece := range []string{`\cf1 Daniel \i Then the `, `\highlight1\cb1 STOP `, `\cf2`, `\i0`, `\highlight3\cb3 end}`} {
+		if !strings.Contains(string(got), piece) {
+			t.Errorf("RTF missing %q (want something like %s)\n%s", piece, want, got)
+		}
+	}
+}
+
 func TestBuildBadColor(t *testing.T) {
 	if _, err := Build(testStyle, []string{"white"}, nil); err == nil {
 		t.Error("expected an error for a non-hex color")

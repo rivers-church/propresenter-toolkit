@@ -7,7 +7,7 @@
     <legend>What kind of PDF is it?</legend>
     <label class="mode">
       <input type="radio" name="mode" value="prompts" checked>
-      <span><strong>Prompts</strong><small>A running script split into <code>SLIDE 1:</code>, <code>SLIDE 2:</code> … Bold words get highlighted.</small></span>
+      <span><strong>Prompts</strong><small>A script split into <code>SLIDE 1:</code>, <code>SLIDE 2:</code> … or free-form notes, which are split by their own paragraphs.</small></span>
     </label>
     <label class="mode">
       <input type="radio" name="mode" value="slides">
@@ -20,6 +20,19 @@
     <select id="style_prompts" name="style_prompts">
       {{range .Data.PromptsStyles}}<option>{{.}}</option>{{else}}<option value="">(no prompts styles yet)</option>{{end}}
     </select>
+  </div>
+  <div class="field" data-mode="prompts">
+    <label for="colors">Colours</label>
+    <select id="colors" name="colors">
+      <option value="auto">Automatic: the PDF's colours for free-form notes, the style's for SLIDE scripts</option>
+      <option value="style">The style's colours (bold words highlighted)</option>
+      <option value="pdf">The PDF's own colours and italics</option>
+    </select>
+  </div>
+  <div class="field" data-mode="prompts">
+    <label for="max_lines">Lines per slide (free-form notes)</label>
+    <input id="max_lines" type="number" name="max_lines" value="7" min="2" max="20" class="short">
+    <small class="muted">A soft limit: long paragraphs are split across slides to stay around this.</small>
   </div>
   <div class="field" data-mode="slides" hidden>
     <label for="style_slides">Style</label>

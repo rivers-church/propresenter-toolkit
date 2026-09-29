@@ -7,11 +7,34 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/rivers-church/propresenter-toolkit/internal/metrics"
 	"github.com/rivers-church/propresenter-toolkit/internal/parse"
 	"github.com/rivers-church/propresenter-toolkit/internal/pdftext"
 	"github.com/rivers-church/propresenter-toolkit/internal/pro"
 	"github.com/rivers-church/propresenter-toolkit/internal/style"
 )
+
+// ColorMode chooses where Prompts text colours come from.
+type ColorMode string
+
+const (
+	// ColorsAuto uses the PDF's colours for free-form notes and the style's
+	// colours for SLIDE-marker scripts.
+	ColorsAuto  ColorMode = "auto"
+	ColorsStyle ColorMode = "style" // style's text colour; bold words highlighted
+	ColorsPDF   ColorMode = "pdf"   // keep the PDF's own colours and italics
+)
+
+// Options tune parsing.
+type Options struct {
+	// Style is the style that will be used, so free-form notes can be split
+	// to fit its text box. Optional.
+	Style *style.Profile
+	// MaxLines is the soft limit of lines per slide for free-form notes
+	// (default parse.DefaultMaxLines).
+	MaxLines int
+	Colors   ColorMode
+}
 
 // Job is a parsed PDF waiting to be reviewed and turned into a .pro.
 type Job struct {
@@ -19,6 +42,9 @@ type Job struct {
 	StyleName    string
 	Name         string
 	Prompts      []parse.PromptSlide // Mode == prompts
+	Freeform     bool                // prompts: no SLIDE markers, split by layout
+	MaxLines     int                 // prompts: soft line limit used for freeform
+	Colors       ColorMode           // prompts
 	Entries      []parse.Entry       // Mode == slides
 	Unrecognized []string            // slides: lines that matched no label
 }
@@ -29,19 +55,41 @@ type Row struct {
 	Text string
 }
 
+// defaultBox matches the Message template: Arial Bold 135pt in a
+// 1920pt-wide box.
+var defaultBox = metrics.Box{Width: 1920, FontSize: 135}
+
 // Parse reads a PDF in the given mode.
-func Parse(pdf []byte, mode style.Kind) (*Job, error) {
+func Parse(pdf []byte, mode style.Kind, opt Options) (*Job, error) {
 	switch mode {
 	case style.KindPrompts:
 		lines, err := pdftext.ReadLines(bytes.NewReader(pdf), int64(len(pdf)), pdftext.Options{})
 		if err != nil {
 			return nil, err
 		}
-		slides := parse.Prompts(lines, parse.DefaultSlideMarker)
-		if len(slides) == 0 {
-			return nil, fmt.Errorf(`no "%s 1:" style markers found - is this a Prompts PDF?`, parse.DefaultSlideMarker)
+		job := &Job{Mode: mode, Colors: opt.Colors, MaxLines: opt.MaxLines}
+		if job.Colors == "" {
+			job.Colors = ColorsAuto
 		}
-		return &Job{Mode: mode, Prompts: slides}, nil
+		if job.MaxLines <= 0 {
+			job.MaxLines = parse.DefaultMaxLines
+		}
+		job.Prompts = parse.Prompts(lines, parse.DefaultSlideMarker)
+		if len(job.Prompts) == 0 {
+			// No SLIDE markers: split by the document's own layout.
+			box := defaultBox
+			if opt.Style != nil {
+				if b, err := pro.TextBox(opt.Style); err == nil && b.Width > 0 && b.FontSize > 0 {
+					box = b
+				}
+			}
+			job.Freeform = true
+			job.Prompts = parse.Freeform(lines, parse.FreeformOptions{Box: box, MaxLines: job.MaxLines})
+		}
+		if len(job.Prompts) == 0 {
+			return nil, fmt.Errorf("no text found in that PDF - is it a scanned image?")
+		}
+		return job, nil
 	case style.KindSlides:
 		lines, err := pdftext.ReadLines(bytes.NewReader(pdf), int64(len(pdf)), pdftext.Options{DropSuperscriptDigits: true})
 		if err != nil {
@@ -86,9 +134,18 @@ func (j *Job) Remove(i int) {
 	}
 }
 
+// PDFColors reports whether Prompts slides keep the PDF's own colours.
+func (j *Job) PDFColors() bool {
+	return j.Colors == ColorsPDF || (j.Colors != ColorsStyle && j.Freeform)
+}
+
 // Warnings lists what the user should check before generating.
 func (j *Job) Warnings() []string {
 	var w []string
+	if j.Freeform {
+		w = append(w, fmt.Sprintf("No “SLIDE 1:” markers found, so slides were split using the PDF's own paragraphs "+
+			"(each block of lines is a slide, long ones split to about %d lines). Remove or tidy any you don't want.", j.MaxLines))
+	}
 	if len(j.Unrecognized) > 0 {
 		w = append(w, "Lines not recognised (skipped): "+strings.Join(j.Unrecognized, "; "))
 	}
@@ -126,7 +183,7 @@ func (j *Job) Build(st *style.Profile) ([]byte, pro.Report, error) {
 		return nil, pro.Report{}, fmt.Errorf("style %q is missing templates: %s", st.Name, strings.Join(missing, ", "))
 	}
 	if j.Mode == style.KindPrompts {
-		data, err := pro.BuildPrompts(st, j.Prompts, j.Name)
+		data, err := pro.BuildPrompts(st, j.Prompts, j.Name, pro.PromptOptions{PDFColors: j.PDFColors()})
 		return data, pro.Report{}, err
 	}
 	return pro.BuildSlides(st, j.Entries, j.Name)

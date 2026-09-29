@@ -10,7 +10,7 @@ import (
 func TestReadLines(t *testing.T) {
 	pdf := testpdf.Build([]testpdf.Line{
 		{testpdf.Regular("SLIDE 1:")},
-		{testpdf.Regular("We are "), testpdf.Bold("SAVED"), testpdf.Regular(" by grace.")},
+		{testpdf.Regular("We are "), testpdf.Colored(testpdf.Bold("SAVED"), 1, 0, 0), testpdf.Regular(" by grace.")},
 	})
 	lines, err := ReadLines(bytes.NewReader(pdf), int64(len(pdf)), Options{})
 	if err != nil {
@@ -24,7 +24,7 @@ func TestReadLines(t *testing.T) {
 	}
 	want := []Run{
 		{Text: "We"}, {Text: "are", SpaceBefore: true},
-		{Text: "SAVED", Bold: true, SpaceBefore: true},
+		{Text: "SAVED", Bold: true, Color: "#FF0000", SpaceBefore: true},
 		{Text: "by", SpaceBefore: true}, {Text: "grace.", SpaceBefore: true},
 	}
 	got := lines[1].Runs

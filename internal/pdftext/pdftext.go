@@ -27,18 +27,30 @@ func IsBoldFont(name string) bool {
 	return false
 }
 
-// Run is one word (or part of a word, where its weight changes mid-word).
-// SpaceBefore is true when a space separates it from the previous run.
+// IsItalicFont reports whether a PDF font name looks like an italic face.
+func IsItalicFont(name string) bool {
+	return strings.Contains(name, "Oblique") || strings.Contains(name, "Italic")
+}
+
+// Run is one word (or part of a word, where its formatting changes
+// mid-word). SpaceBefore is true when a space separates it from the
+// previous run.
 type Run struct {
 	Text        string
 	Bold        bool
+	Italic      bool
+	Color       string // fill colour as "#RRGGBB"; "" for ordinary ink or unknown
+	Highlight   bool   // dark text on a dark page, i.e. drawn on a light box
 	SpaceBefore bool
 }
 
 // Line is one visual line of text on a page.
 type Line struct {
-	Page int
-	Runs []Run
+	Page   int
+	Runs   []Run
+	X0, X1 float64 // left and right edge of the text, in points
+	Y      float64 // baseline, in points from the bottom of the page
+	Size   float64 // largest font size on the line
 }
 
 // Text returns the line as a plain string.
@@ -82,7 +94,18 @@ type glyph struct {
 	font       string
 	size, x, y float64
 	w          float64
-	seq        int // position in the content stream, for stable ordering
+	seq        int    // position in the content stream, for stable ordering
+	color      string // "#RRGGBB", or "" for ordinary ink / unknown
+	highlight  bool
+}
+
+// Dark text is ordinary ink on a light page, but on a dark page it can only
+// be visible because the author put a light box behind it.
+const darkText = 0.3
+
+func hexColor(c rgb) string {
+	b := func(v float64) int { return int(math.Round(math.Max(0, math.Min(1, v)) * 255)) }
+	return fmt.Sprintf("#%02X%02X%02X", b(c[0]), b(c[1]), b(c[2]))
 }
 
 // ReadLines parses a PDF and returns its visual lines in reading order.
@@ -114,6 +137,8 @@ func pageLines(page pdf.Page, pageNum int, opt Options) (lines []Line, err error
 		}
 	}()
 
+	colors, background := pageColors(page)
+	darkPage := background.brightness() < 0.5
 	var glyphs []glyph
 	for i, t := range page.Content().Text {
 		// The library emits zero-width newline glyphs at text-object
@@ -123,7 +148,16 @@ func pageLines(page pdf.Page, pageNum int, opt Options) (lines []Line, err error
 			continue
 		}
 		s := ligatures.Replace(t.S)
-		glyphs = append(glyphs, glyph{s: s, font: t.Font, size: t.FontSize, x: t.X, y: t.Y, w: t.W, seq: i})
+		g := glyph{s: s, font: t.Font, size: t.FontSize, x: t.X, y: t.Y, w: t.W, seq: i}
+		if c, ok := colors[keyAt(t.X, t.Y)]; ok {
+			switch {
+			case c.brightness() >= darkText:
+				g.color = hexColor(c)
+			case darkPage:
+				g.color, g.highlight = "#000000", true
+			}
+		}
+		glyphs = append(glyphs, g)
 	}
 
 	// Cluster by baseline (top of page first), then order each line by x.
@@ -149,7 +183,16 @@ func pageLines(page pdf.Page, pageNum int, opt Options) (lines []Line, err error
 			row = dropSuperscriptDigits(row)
 		}
 		if runs := buildRuns(row); len(runs) > 0 {
-			lines = append(lines, Line{Page: pageNum, Runs: runs})
+			l := Line{Page: pageNum, Runs: runs, Y: row[0].y, X0: math.Inf(1), X1: math.Inf(-1)}
+			for _, g := range row {
+				if strings.TrimSpace(g.s) == "" {
+					continue
+				}
+				l.X0 = math.Min(l.X0, g.x)
+				l.X1 = math.Max(l.X1, g.x+g.w)
+				l.Size = math.Max(l.Size, g.size)
+			}
+			lines = append(lines, l)
 		}
 	}
 	return lines, nil
@@ -204,14 +247,16 @@ func buildRuns(row []glyph) []Run {
 			pendingSpace = true
 		}
 		prevEnd = g.x + g.w
-		bold := IsBoldFont(g.font)
+		bold, italic := IsBoldFont(g.font), IsItalicFont(g.font)
 
 		n := len(runs)
-		if n > 0 && !pendingSpace && runs[n-1].Bold == bold {
-			runs[n-1].Text += g.s
-			continue
+		if n > 0 && !pendingSpace {
+			if last := &runs[n-1]; last.Bold == bold && last.Italic == italic && last.Color == g.color && last.Highlight == g.highlight {
+				last.Text += g.s
+				continue
+			}
 		}
-		runs = append(runs, Run{Text: g.s, Bold: bold, SpaceBefore: pendingSpace && n > 0})
+		runs = append(runs, Run{Text: g.s, Bold: bold, Italic: italic, Color: g.color, Highlight: g.highlight, SpaceBefore: pendingSpace && n > 0})
 		pendingSpace = false
 	}
 	return runs

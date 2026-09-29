@@ -6,48 +6,143 @@ import (
 	"bytes"
 	"fmt"
 	"strings"
+
+	"github.com/rivers-church/propresenter-toolkit/internal/metrics"
 )
 
-// Span is a piece of text in regular or bold weight.
+// Span is a piece of text in one style.
 type Span struct {
-	Text string
-	Bold bool
+	Text   string
+	Bold   bool
+	Italic bool
+	Color  [3]float64 // fill colour, 0..1 per component; zero value is black
+}
+
+// Colored returns s drawn in the given RGB colour.
+func Colored(s Span, r, g, b float64) Span {
+	s.Color = [3]float64{r, g, b}
+	return s
 }
 
 // Line is one line of text; spans are drawn left to right.
 type Line []Span
 
-// Regular and Bold are shorthands for building lines.
+// Regular, Bold and Italic are shorthands for building lines.
 func Regular(s string) Span { return Span{Text: s} }
 func Bold(s string) Span    { return Span{Text: s, Bold: true} }
+func Italic(s string) Span  { return Span{Text: s, Italic: true} }
+
+// Placed is a line at an exact position: X is the left edge (or the centre
+// when Center is set), Y the baseline from the top of the page, both in
+// points. Size defaults to 12.
+type Placed struct {
+	Spans  []Span
+	X, Y   float64
+	Size   float64
+	Center bool
+	Box    bool // draw a white box behind the line
+}
 
 // Build returns a single-page A4 PDF with one line of 12pt text per entry,
-// using the standard Helvetica and Helvetica-Bold fonts.
+// 20pt apart, left-aligned at x=40.
 func Build(lines []Line) []byte {
-	var content strings.Builder
-	y := 800.0
-	for _, line := range lines {
-		content.WriteString("BT\n")
-		fmt.Fprintf(&content, "1 0 0 1 40 %.1f Tm\n", y)
-		for _, sp := range line {
-			font := "F1"
-			if sp.Bold {
-				font = "F2"
-			}
-			fmt.Fprintf(&content, "/%s 12 Tf (%s) Tj\n", font, escape(sp.Text))
-		}
-		content.WriteString("ET\n")
-		y -= 20
+	var page []Placed
+	for i, l := range lines {
+		page = append(page, Placed{Spans: l, X: 40, Y: 42 + float64(i)*20})
 	}
+	return BuildPages([][]Placed{page})
+}
 
+const pageW, pageH = 595.0, 842.0
+
+// LineWidth is the drawn width of spans at a font size (all fonts here share
+// the Helvetica-Bold width table, declared via /Widths).
+func LineWidth(spans []Span, size float64) float64 {
+	w := 0.0
+	for _, sp := range spans {
+		w += metrics.TextWidth(sp.Text, size)
+	}
+	return w
+}
+
+// BuildPages returns a PDF with one page per entry.
+func BuildPages(pages [][]Placed) []byte { return build(pages, nil) }
+
+// BuildDarkPages is BuildPages on black pages (painted with a full-page
+// path fill, as some note apps export). A line with Box set gets a white
+// box drawn behind it.
+func BuildDarkPages(pages [][]Placed) []byte {
+	black := [3]float64{}
+	return build(pages, &black)
+}
+
+func build(pages [][]Placed, background *[3]float64) []byte {
+	var widths strings.Builder
+	for _, w := range metrics.Widths() {
+		fmt.Fprintf(&widths, "%d ", w)
+	}
+	font := func(base string) string {
+		return fmt.Sprintf("<< /Type /Font /Subtype /Type1 /BaseFont /%s /Encoding /WinAnsiEncoding /FirstChar 32 /LastChar 126 /Widths [%s] >>", base, widths.String())
+	}
 	objs := []string{
 		"<< /Type /Catalog /Pages 2 0 R >>",
-		"<< /Type /Pages /Kids [3 0 R] /Count 1 >>",
-		"<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Contents 4 0 R /Resources << /Font << /F1 5 0 R /F2 6 0 R >> >> >>",
-		fmt.Sprintf("<< /Length %d >>\nstream\n%sendstream", content.Len(), content.String()),
-		"<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>",
-		"<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>",
+		"", // pages, filled in below
+		font("Helvetica"),
+		font("Helvetica-Bold"),
+		font("Helvetica-Oblique"),
+		font("Helvetica-BoldOblique"),
 	}
+	var kids []string
+	for _, page := range pages {
+		var content strings.Builder
+		if background != nil {
+			bg := *background
+			fmt.Fprintf(&content, "%g %g %g rg 0 %g m %g %g l %g 0 l 0 0 l h f\n", bg[0], bg[1], bg[2], pageH, pageW, pageH, pageW)
+		}
+		for _, l := range page {
+			if l.Box {
+				size := l.Size
+				if size == 0 {
+					size = 12
+				}
+				x := l.X
+				if l.Center {
+					x -= LineWidth(l.Spans, size) / 2
+				}
+				fmt.Fprintf(&content, "1 1 1 rg %.2f %.2f %.2f %.2f re f\n", x-2, pageH-l.Y-4, LineWidth(l.Spans, size)+4, size+4)
+			}
+		}
+		for _, l := range page {
+			size := l.Size
+			if size == 0 {
+				size = 12
+			}
+			x := l.X
+			if l.Center {
+				x -= LineWidth(l.Spans, size) / 2
+			}
+			fmt.Fprintf(&content, "BT\n1 0 0 1 %.2f %.2f Tm\n", x, pageH-l.Y)
+			for _, sp := range l.Spans {
+				f := 1
+				if sp.Bold {
+					f++
+				}
+				if sp.Italic {
+					f += 2
+				}
+				fmt.Fprintf(&content, "%g %g %g rg /F%d %g Tf (%s) Tj\n",
+					sp.Color[0], sp.Color[1], sp.Color[2], f, size, escape(sp.Text))
+			}
+			content.WriteString("ET\n")
+		}
+		contentObj := len(objs) + 1
+		objs = append(objs, fmt.Sprintf("<< /Length %d >>\nstream\n%sendstream", content.Len(), content.String()))
+		pageObj := len(objs) + 1
+		objs = append(objs, fmt.Sprintf("<< /Type /Page /Parent 2 0 R /MediaBox [0 0 %g %g] /Contents %d 0 R /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R /F4 6 0 R >> >> >>", pageW, pageH, contentObj))
+		kids = append(kids, fmt.Sprintf("%d 0 R", pageObj))
+	}
+	objs[1] = fmt.Sprintf("<< /Type /Pages /Kids [%s] /Count %d >>", strings.Join(kids, " "), len(kids))
+
 	var b bytes.Buffer
 	b.WriteString("%PDF-1.4\n")
 	offsets := make([]int, len(objs))

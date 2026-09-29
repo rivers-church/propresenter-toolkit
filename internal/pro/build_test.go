@@ -37,7 +37,7 @@ func namedStyle(t *testing.T, name string) *style.Profile {
 func promptsRTF(t *testing.T, st *style.Profile) string {
 	t.Helper()
 	slides := []parse.PromptSlide{{{{Text: "We"}, {Text: "are", SpaceBefore: true}, {Text: "SAVED", Bold: true, SpaceBefore: true}}}}
-	data, err := BuildPrompts(st, slides, "x")
+	data, err := BuildPrompts(st, slides, "x", PromptOptions{})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -98,7 +98,7 @@ func TestBuildPrompts(t *testing.T) {
 		{{{Text: "We"}, {Text: "are", SpaceBefore: true}, {Text: "SAVED", Bold: true, SpaceBefore: true}}},
 		{{{Text: "Second"}}, {{Text: "slide"}}},
 	}
-	data, err := BuildPrompts(st, slides, "Test Message")
+	data, err := BuildPrompts(st, slides, "Test Message", PromptOptions{})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -180,7 +180,7 @@ func TestBuildSlides(t *testing.T) {
 
 func TestBuildPromptsWrongTemplate(t *testing.T) {
 	st := &style.Profile{Name: "empty", Kind: style.KindPrompts, Templates: map[string][]byte{}}
-	if _, err := BuildPrompts(st, nil, "x"); err == nil {
+	if _, err := BuildPrompts(st, nil, "x", PromptOptions{}); err == nil {
 		t.Error("expected an error for a style with no body template")
 	}
 }
@@ -192,7 +192,7 @@ func TestPromptsFromPDF(t *testing.T) {
 		{Runs: []pdftext.Run{{Text: "SLIDE"}, {Text: "1:", SpaceBefore: true}}},
 		{Runs: []pdftext.Run{{Text: "Hello"}}},
 	}
-	data, err := BuildPrompts(st, parse.Prompts(lines, ""), "x")
+	data, err := BuildPrompts(st, parse.Prompts(lines, ""), "x", PromptOptions{})
 	if err != nil {
 		t.Fatal(err)
 	}

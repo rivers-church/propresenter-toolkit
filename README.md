@@ -16,8 +16,26 @@ uses it from a browser.
 Upload a PDF, check the slides it found, and download a `.pro`. There are two
 modes:
 
-- **Prompts**: a running script split into `SLIDE 1:`, `SLIDE 2:`, …
-  One slide per section; bold words in the PDF are drawn in a highlight colour.
+- **Prompts**: either of two kinds of speaker notes.
+  - **A script split into `SLIDE 1:`, `SLIDE 2:`, …** gives one slide per
+    section. Bold words in the PDF are drawn in the style's highlight colour.
+  - **Free-form notes** (no `SLIDE` markers) are split by their own layout:
+    - Each block of lines separated by blank space becomes a slide, and a
+      larger section heading goes at the top of the slide that follows it.
+    - Centred heading lines keep their line breaks. Wrapped paragraphs such
+      as scripture flow as one paragraph.
+    - Blocks too long for one slide are split across several at sentence
+      ends, to stay under a soft limit of **7 lines** at the template's font
+      size. The limit can be changed on the Convert page.
+    - The author's own **colours and italics** are kept. Text on a highlight
+      box (dark text on a dark page) becomes black on a white highlight.
+    - Small print such as the page header and date is dropped.
+
+    Expect to tidy a few slides by hand, e.g. merging two short ones.
+
+  The Convert page's **Colours** option switches between the PDF's colours
+  and the style's colours. **Automatic** uses the PDF's for free-form notes
+  and the style's for `SLIDE` scripts.
 - **Slides**: a labelled outline:
 
   | In the PDF | Becomes |
@@ -167,6 +185,10 @@ the Style Manager from a `.pro` that has a slide set to "Point L3", and clicking
   `internal/pdftext/pdftext.go`.
 - **Only text is generated.** Backgrounds, media and props come from the
   template slide; `Image:` lines are left for you to add.
+- **Line counts are estimates** for free-form notes, based on Arial/Helvetica
+  Bold character widths. They're accurate for the Message template; with other
+  fonts a slide may run a line over or under.
+- **Underlines aren't carried over.** Colours, italics and highlight boxes are.
 
 ## Development
 
@@ -187,8 +209,9 @@ cmd/pptoolkit/   the server binary
 internal/
   web/           HTTP handlers, templates, CSS (embedded in the binary)
   convert/       PDF -> review -> .pro pipeline
-  pdftext/       PDF -> visual lines of words, with bold flags
-  parse/         lines -> Prompts slides / Notes entries
+  pdftext/       PDF -> visual lines of words, with bold/italic flags and colours
+  parse/         lines -> Prompts slides (SLIDE markers or free-form) / Notes entries
+  metrics/       estimates how text wraps in a slide's text box
   rtf/           the RTF dialect ProPresenter writes (+ plain-text preview)
   style/         style profiles (JSON) and the styles folder; bundled examples
   pro/           read .pro files; build new ones from a style + parsed PDF

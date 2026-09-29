@@ -8,6 +8,7 @@ import (
 	"github.com/google/uuid"
 	"google.golang.org/protobuf/proto"
 
+	"github.com/rivers-church/propresenter-toolkit/internal/metrics"
 	"github.com/rivers-church/propresenter-toolkit/internal/parse"
 	"github.com/rivers-church/propresenter-toolkit/internal/pb"
 	"github.com/rivers-church/propresenter-toolkit/internal/rtf"
@@ -133,9 +134,18 @@ func withLabel(a *pb.Action, text string, color *pb.Color) {
 
 // ---------------------------------------------------------------- prompts --
 
+// PromptOptions tune how Prompts slides are coloured.
+type PromptOptions struct {
+	// PDFColors keeps the PDF's own text colours and italics (and turns
+	// dark-on-light-box text into black on a white highlight) instead of
+	// the style's regular/highlight colours.
+	PDFColors bool
+}
+
 // BuildPrompts makes one slide per parsed prompts section, cloning the
-// style's "body" template. Bold words get the emphasis color.
-func BuildPrompts(st *style.Profile, slides []parse.PromptSlide, name string) ([]byte, error) {
+// style's "body" template. By default bold words get the emphasis colour;
+// see PromptOptions for keeping the PDF's colours instead.
+func BuildPrompts(st *style.Profile, slides []parse.PromptSlide, name string, opt PromptOptions) ([]byte, error) {
 	tmpl, err := st.TemplateCue(style.RoleBody)
 	if err != nil {
 		return nil, err
@@ -143,11 +153,7 @@ func BuildPrompts(st *style.Profile, slides []parse.PromptSlide, name string) ([
 	if _, _, err := slideParts(tmpl, 1); err != nil {
 		return nil, fmt.Errorf("style %q body template: %w", st.Name, err)
 	}
-	highlight := st.Settings.Highlights()
-	colors := []string{st.Settings.Regular()}
-	if highlight {
-		colors = append(colors, st.Settings.Emphasis())
-	}
+	highlight := st.Settings.Highlights() && !opt.PDFColors
 
 	b := newBuilder(name)
 	for n, slide := range slides {
@@ -161,15 +167,40 @@ func BuildPrompts(st *style.Profile, slides []parse.PromptSlide, name string) ([
 		}
 		attrs.CustomAttributes = nil
 
+		colors := []string{st.Settings.Regular()}
+		if highlight {
+			colors = append(colors, st.Settings.Emphasis())
+		}
+		colorIndex := func(hex string) int {
+			for i, c := range colors {
+				if strings.EqualFold(c, hex) {
+					return i
+				}
+			}
+			colors = append(colors, hex)
+			return len(colors) - 1
+		}
+
 		var lines []rtf.Line
 		for _, line := range slide {
 			var l rtf.Line
 			for _, r := range line {
-				color := 0
-				if r.Bold && highlight {
-					color = 1
+				run := rtf.Run{Text: r.Text, SpaceBefore: r.SpaceBefore}
+				switch {
+				case opt.PDFColors && r.Highlight:
+					// Dark text the author put on a light box: black on white.
+					run.Color = colorIndex("#000000")
+					run.Highlight = colorIndex("#FFFFFF") + 1
+					run.Italic = r.Italic
+				case opt.PDFColors:
+					if r.Color != "" {
+						run.Color = colorIndex(r.Color)
+					}
+					run.Italic = r.Italic
+				case r.Bold && highlight:
+					run.Color = 1
 				}
-				l = append(l, rtf.Run{Text: r.Text, Color: color, SpaceBefore: r.SpaceBefore})
+				l = append(l, run)
 			}
 			lines = append(lines, l)
 		}
@@ -181,6 +212,27 @@ func BuildPrompts(st *style.Profile, slides []parse.PromptSlide, name string) ([
 		b.add(cue)
 	}
 	return b.bytes()
+}
+
+// TextBox describes a style's Prompts text box, for estimating how many
+// lines text will wrap to.
+func TextBox(st *style.Profile) (metrics.Box, error) {
+	tmpl, err := st.TemplateCue(style.RoleBody)
+	if err != nil {
+		return metrics.Box{}, err
+	}
+	_, els, err := slideParts(tmpl, 1)
+	if err != nil {
+		return metrics.Box{}, err
+	}
+	el := els[0]
+	m := el.GetText().GetMargins()
+	return metrics.Box{
+		Width:    el.GetBounds().GetSize().GetWidth() - m.GetLeft() - m.GetRight(),
+		FontSize: el.GetText().GetAttributes().GetFont().GetSize(),
+		AllCaps: !st.Settings.CapsOff() &&
+			el.GetText().GetAttributes().GetCapitalization() == pb.Graphics_Text_Attributes_CAPITALIZATION_ALL_CAPS,
+	}, nil
 }
 
 // ----------------------------------------------------------------- slides --

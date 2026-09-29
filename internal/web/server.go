@@ -266,7 +266,14 @@ func (s *Server) convertUpload(w http.ResponseWriter, r *http.Request) {
 		redirectWith(w, r, "/", "Choose a style first (or make one in the Style Manager).")
 		return
 	}
-	job, err := convert.Parse(data, mode)
+	opt := convert.Options{Colors: convert.ColorMode(r.FormValue("colors"))}
+	if n, err := strconv.Atoi(r.FormValue("max_lines")); err == nil && n > 0 {
+		opt.MaxLines = n
+	}
+	if st, err := s.cfg.Styles.Load(styleName); err == nil {
+		opt.Style = st
+	}
+	job, err := convert.Parse(data, mode, opt)
 	if err != nil {
 		redirectWith(w, r, "/", "Couldn't read that PDF: "+err.Error())
 		return

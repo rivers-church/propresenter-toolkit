@@ -19,6 +19,7 @@ type FontStyle struct {
 	FontName           string
 	SizePt             float64
 	Bold               bool
+	Italic             bool
 	LineHeightMultiple float64
 	ParagraphSpacingPt float64
 	BoxWidthPt         float64
@@ -28,7 +29,9 @@ type FontStyle struct {
 // space between this run and the previous one on the same line.
 type Run struct {
 	Text        string
-	Color       int // index into the colors passed to Build
+	Color       int  // index into the colors passed to Build
+	Italic      bool // italic (the template's own italic always applies)
+	Highlight   int  // 0 for none, else 1 + index of the highlight colour
 	SpaceBefore bool
 }
 
@@ -46,6 +49,7 @@ func StyleFromElement(el *pb.Graphics_Element) FontStyle {
 		FontName:           attrs.GetFont().GetName(),
 		SizePt:             attrs.GetFont().GetSize(),
 		Bold:               attrs.GetFont().GetBold(),
+		Italic:             attrs.GetFont().GetItalic(),
 		LineHeightMultiple: lh,
 		ParagraphSpacingPt: attrs.GetParagraphStyle().GetParagraphSpacing(),
 		BoxWidthPt:         el.GetBounds().GetSize().GetWidth(),
@@ -77,28 +81,51 @@ func Build(style FontStyle, colorsHex []string, lines []Line) ([]byte, error) {
 	if style.Bold {
 		bold = `\b`
 	}
+	italicWord := func(on bool) string {
+		if on {
+			return `\i`
+		}
+		return `\i0`
+	}
 	pard := fmt.Sprintf(`\pard\li0\fi0\ri0\qc\sb0\sa%d\sl%d\slmult1\slleading0`+
-		`\f0%s\i0\ul0\strike0\fs%d\expnd0\expndtw0\CocoaLigature1`+
+		`\f0%s%s\ul0\strike0\fs%d\expnd0\expndtw0\CocoaLigature1`+
 		`\cf1\strokewidth0\strokec1\nosupersub\ulc0\highlight%d\cb%d `,
 		round(style.ParagraphSpacingPt*20), round(style.LineHeightMultiple*240),
-		bold, round(style.SizePt*2), clear, clear)
+		bold, italicWord(style.Italic), round(style.SizePt*2), clear, clear)
 
 	paragraphs := make([]string, 0, len(lines))
 	for _, line := range lines {
 		var sb strings.Builder
 		sb.WriteString(pard)
-		current := -1
+		current, italic, highlight := -1, style.Italic, clear
 		for i, run := range line {
 			leading := ""
 			if i > 0 && run.SpaceBefore {
 				leading = " "
 			}
+			// Control words that change, then one space, then the text.
+			var ctl string
 			if run.Color != current {
-				fmt.Fprintf(&sb, `%s\cf%d %s`, leading, run.Color+1, Escape(run.Text))
+				ctl += fmt.Sprintf(`\cf%d`, run.Color+1)
+				current = run.Color
+			}
+			if it := style.Italic || run.Italic; it != italic {
+				ctl += italicWord(it)
+				italic = it
+			}
+			hl := clear
+			if run.Highlight > 0 {
+				hl = run.Highlight
+			}
+			if hl != highlight {
+				ctl += fmt.Sprintf(`\highlight%d\cb%d`, hl, hl)
+				highlight = hl
+			}
+			if ctl != "" {
+				sb.WriteString(leading + ctl + " " + Escape(run.Text))
 			} else {
 				sb.WriteString(leading + Escape(run.Text))
 			}
-			current = run.Color
 		}
 		paragraphs = append(paragraphs, sb.String())
 	}

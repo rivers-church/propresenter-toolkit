@@ -93,3 +93,5 @@ td form { margin: 0; display: inline; }
 .pill { border: 1px solid var(--line); background: var(--panel); border-radius: 999px; padding: 4px 12px; font-size: 0.9rem; color: var(--muted); }
 .pill strong { color: var(--ink); margin-right: 4px; }
 .pill.ok { background: var(--ok-bg); border-color: var(--ok); color: var(--ok); }
+input[type=number] { font: inherit; padding: 8px 10px; border: 1px solid var(--line); border-radius: 6px; background: var(--bg); color: var(--ink); }
+input.short { width: 6em; }
