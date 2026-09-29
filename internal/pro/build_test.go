@@ -13,17 +13,56 @@ import (
 
 func defaultStyle(t *testing.T, kind style.Kind) *style.Profile {
 	t.Helper()
+	if kind == style.KindPrompts {
+		return namedStyle(t, "Message (Prompts)")
+	}
+	return namedStyle(t, "2026-09-27 (Slides)")
+}
+
+func namedStyle(t *testing.T, name string) *style.Profile {
+	t.Helper()
 	for _, data := range style.Defaults() {
 		p, err := style.Parse(data)
 		if err != nil {
 			t.Fatal(err)
 		}
-		if p.Kind == kind {
+		if p.Name == name {
 			return p
 		}
 	}
-	t.Fatalf("no default %s style", kind)
+	t.Fatalf("no built-in style %q", name)
 	return nil
+}
+
+func promptsRTF(t *testing.T, st *style.Profile) string {
+	t.Helper()
+	slides := []parse.PromptSlide{{{{Text: "We"}, {Text: "are", SpaceBefore: true}, {Text: "SAVED", Bold: true, SpaceBefore: true}}}}
+	data, err := BuildPrompts(st, slides, "x")
+	if err != nil {
+		t.Fatal(err)
+	}
+	p, err := Parse(data)
+	if err != nil {
+		t.Fatal(err)
+	}
+	return string(SlideAction(p.GetCues()[0]).GetSlide().GetPresentation().GetBaseSlide().GetElements()[0].GetElement().GetText().GetRtfData())
+}
+
+func TestPromptsAllYellowAndPlain(t *testing.T) {
+	for name, colour := range map[string]string{
+		"Message (Prompts, all yellow)": `\red255\green255\blue0`,
+		"Message (Prompts, plain)":      `\red255\green255\blue255`,
+	} {
+		s := promptsRTF(t, namedStyle(t, name))
+		// One text colour plus the transparent highlight entry, and the bold
+		// word is not given a different colour.
+		if !strings.Contains(s, `{\colortbl;`+colour+`;\red255\green255\blue255;}`) {
+			t.Errorf("%s: wrong colour table: %s", name, s)
+		}
+		if strings.Contains(s, `\cf2`) || !strings.Contains(s, `\cf1 We are SAVED`) {
+			t.Errorf("%s: bold word should not be highlighted: %s", name, s)
+		}
+	}
 }
 
 // checkIdentities verifies every cue has a unique UUID and the cue group

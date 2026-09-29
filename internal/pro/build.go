@@ -143,7 +143,11 @@ func BuildPrompts(st *style.Profile, slides []parse.PromptSlide, name string) ([
 	if _, _, err := slideParts(tmpl, 1); err != nil {
 		return nil, fmt.Errorf("style %q body template: %w", st.Name, err)
 	}
-	colors := []string{st.Settings.Regular(), st.Settings.Emphasis()}
+	highlight := st.Settings.Highlights()
+	colors := []string{st.Settings.Regular()}
+	if highlight {
+		colors = append(colors, st.Settings.Emphasis())
+	}
 
 	b := newBuilder(name)
 	for n, slide := range slides {
@@ -162,7 +166,7 @@ func BuildPrompts(st *style.Profile, slides []parse.PromptSlide, name string) ([
 			var l rtf.Line
 			for _, r := range line {
 				color := 0
-				if r.Bold {
+				if r.Bold && highlight {
 					color = 1
 				}
 				l = append(l, rtf.Run{Text: r.Text, Color: color, SpaceBefore: r.SpaceBefore})

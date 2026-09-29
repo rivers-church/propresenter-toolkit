@@ -22,7 +22,8 @@
   <div class="field inline">
     <label>Text colour <input type="color" name="regular_color" value="{{.Data.Regular}}"></label>
     {{if eq .Data.Kind "prompts"}}
-    <label>Highlight colour (bold words) <input type="color" name="emphasis_color" value="{{.Data.Emphasis}}"></label>
+    <label><input type="checkbox" name="highlight_bold" checked> Highlight bold words</label>
+    <label>Highlight colour <input type="color" name="emphasis_color" value="{{.Data.Emphasis}}"></label>
     <label><input type="checkbox" name="keep_caps"> Keep the template's forced ALL CAPS</label>
     {{end}}
     <label><input type="checkbox" name="overwrite"> Replace an existing style with this name</label>

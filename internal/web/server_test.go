@@ -94,7 +94,7 @@ func TestLearnStyleThenConvert(t *testing.T) {
 	if b := body(t, resp); !strings.Contains(b, "slide 1") {
 		t.Fatalf("capture didn't register: %s", b)
 	}
-	resp, _ = c.PostForm(pick+"/save", url.Values{"name": {"Test Style"}, "regular_color": {"#FFFFFF"}, "emphasis_color": {"#00FF00"}})
+	resp, _ = c.PostForm(pick+"/save", url.Values{"name": {"Test Style"}, "regular_color": {"#FFFFFF"}, "emphasis_color": {"#00FF00"}, "highlight_bold": {"on"}})
 	if b := body(t, resp); !strings.Contains(b, `Style &#34;Test Style&#34; saved.`) {
 		t.Fatalf("save failed: %s", b)
 	}

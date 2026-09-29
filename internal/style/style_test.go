@@ -3,6 +3,7 @@ package style
 import (
 	"bytes"
 	"encoding/json"
+	"strings"
 	"testing"
 )
 
@@ -47,7 +48,8 @@ func TestStore(t *testing.T) {
 		t.Fatal(err)
 	}
 	names, err := s.ListKind(KindPrompts)
-	if err != nil || len(names) != 1 {
+	want := []string{"Message (Prompts)", "Message (Prompts, all yellow)", "Message (Prompts, plain)"}
+	if err != nil || strings.Join(names, "|") != strings.Join(want, "|") {
 		t.Fatalf("prompts styles = %v, %v", names, err)
 	}
 	p, err := s.Load(names[0])
@@ -61,12 +63,61 @@ func TestStore(t *testing.T) {
 	if err := s.Delete("Copy"); err != nil {
 		t.Fatal(err)
 	}
-	// Seeding again must not overwrite user styles.
-	if err := s.Seed(map[string][]byte{"x": []byte(`{"name":"X","kind":"prompts"}`)}); err != nil {
+}
+
+func TestSeedOnlyOffersEachDefaultOnce(t *testing.T) {
+	s := Store{Dir: t.TempDir()}
+	a := []byte(`{"name":"A","kind":"prompts"}`)
+	b := []byte(`{"name":"B","kind":"prompts"}`)
+	if err := s.Seed(map[string][]byte{"a": a}); err != nil {
 		t.Fatal(err)
 	}
-	if _, err := s.Load("X"); err == nil {
-		t.Error("Seed overwrote a non-empty store")
+	if err := s.Delete("A"); err != nil {
+		t.Fatal(err)
+	}
+	// A later version adds B; the deleted A must not come back.
+	if err := s.Seed(map[string][]byte{"a": a, "b": b}); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := s.Load("A"); err == nil {
+		t.Error("deleted default A was restored")
+	}
+	if _, err := s.Load("B"); err != nil {
+		t.Errorf("new default B not added: %v", err)
+	}
+}
+
+func TestSeedNeverOverwrites(t *testing.T) {
+	s := Store{Dir: t.TempDir()}
+	mine := &Profile{Name: "A", Kind: KindSlides}
+	if err := s.Save(mine); err != nil {
+		t.Fatal(err)
+	}
+	if err := s.Seed(map[string][]byte{"a": []byte(`{"name":"A","kind":"prompts"}`)}); err != nil {
+		t.Fatal(err)
+	}
+	if p, _ := s.Load("A"); p == nil || p.Kind != KindSlides {
+		t.Errorf("user's style A was overwritten: %+v", p)
+	}
+}
+
+// Installs from before the offered-list existed already got the original
+// examples; a deleted original must not reappear, but new ones should.
+func TestSeedLegacyStore(t *testing.T) {
+	s := Store{Dir: t.TempDir()}
+	if err := s.Save(&Profile{Name: "My own", Kind: KindPrompts}); err != nil {
+		t.Fatal(err)
+	}
+	if err := s.Seed(Defaults()); err != nil {
+		t.Fatal(err)
+	}
+	for _, name := range legacyDefaults {
+		if _, err := s.Load(name); err == nil {
+			t.Errorf("legacy default %q was re-added", name)
+		}
+	}
+	if _, err := s.Load("Message (Prompts, plain)"); err != nil {
+		t.Errorf("new default not added to legacy store: %v", err)
 	}
 }
 

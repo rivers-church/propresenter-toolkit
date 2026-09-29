@@ -61,6 +61,7 @@ type Settings struct {
 	RegularColor  string          `json:"regular_color,omitempty"`
 	EmphasisColor string          `json:"emphasis_color,omitempty"`
 	ForceCapsOff  *bool           `json:"force_caps_off,omitempty"`
+	HighlightBold *bool           `json:"highlight_bold,omitempty"`
 	AudienceLooks map[string]Look `json:"audience_looks,omitempty"`
 }
 
@@ -73,6 +74,10 @@ func (s Settings) Emphasis() string { return orDefault(s.EmphasisColor, "#FFFF00
 // CapsOff reports whether forced ALL CAPS should be stripped from the
 // template (default true), so the PDF's own casing is kept.
 func (s Settings) CapsOff() bool { return s.ForceCapsOff == nil || *s.ForceCapsOff }
+
+// Highlights reports whether bold words in a Prompts PDF get the emphasis
+// color (default true). When false, all text uses the regular color.
+func (s Settings) Highlights() bool { return s.HighlightBold == nil || *s.HighlightBold }
 
 // Profile is one saved style.
 type Profile struct {
@@ -241,24 +246,77 @@ func (s Store) path(name string) (string, error) {
 	return filepath.Join(s.Dir, name+".json"), nil
 }
 
-// Seed copies the given default profiles into the store if it holds no
-// styles yet, so a fresh install starts with working examples.
+// offeredFile records which built-in styles have been copied into the
+// store, so new ones added in later versions appear, but ones you deleted
+// don't come back.
+const offeredFile = ".defaults-offered"
+
+// legacyDefaults were seeded by versions that didn't keep offeredFile.
+var legacyDefaults = []string{"Message (Prompts)", "2026-09-27 (Slides)"}
+
+// Seed copies built-in example styles into the store: every one on a fresh
+// install, and afterwards only ones that haven't been offered before. A
+// style that already exists under the same name is never overwritten.
 func (s Store) Seed(defaults map[string][]byte) error {
 	existing, err := s.List()
 	if err != nil {
 		return err
 	}
-	if len(existing) > 0 {
+	offered := map[string]bool{}
+	data, err := os.ReadFile(filepath.Join(s.Dir, offeredFile))
+	switch {
+	case err == nil:
+		for _, name := range strings.Split(string(data), "\n") {
+			if name = strings.TrimSpace(name); name != "" {
+				offered[name] = true
+			}
+		}
+	case errors.Is(err, os.ErrNotExist) && len(existing) > 0:
+		// Installed before this file existed: the original examples were
+		// offered then, so don't resurrect them if they've been deleted.
+		for _, name := range legacyDefaults {
+			offered[name] = true
+		}
+	case !errors.Is(err, os.ErrNotExist):
+		return err
+	}
+	have := map[string]bool{}
+	for _, p := range existing {
+		have[p.Name] = true
+	}
+
+	files := make([]string, 0, len(defaults))
+	for f := range defaults {
+		files = append(files, f)
+	}
+	sort.Strings(files)
+	changed := false
+	for _, f := range files {
+		p, err := Parse(defaults[f])
+		if err != nil {
+			return fmt.Errorf("built-in style %s: %w", f, err)
+		}
+		if offered[p.Name] {
+			continue
+		}
+		if !have[p.Name] {
+			if err := s.Save(p); err != nil {
+				return err
+			}
+		}
+		offered[p.Name] = true
+		changed = true
+	}
+	if !changed {
 		return nil
 	}
-	for _, data := range defaults {
-		p, err := Parse(data)
-		if err != nil {
-			return err
-		}
-		if err := s.Save(p); err != nil {
-			return err
-		}
+	names := make([]string, 0, len(offered))
+	for n := range offered {
+		names = append(names, n)
 	}
-	return nil
+	sort.Strings(names)
+	if err := os.MkdirAll(s.Dir, 0o755); err != nil {
+		return err
+	}
+	return os.WriteFile(filepath.Join(s.Dir, offeredFile), []byte(strings.Join(names, "\n")+"\n"), 0o644)
 }

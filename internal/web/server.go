@@ -502,6 +502,8 @@ func (s *Server) styleSave(w http.ResponseWriter, r *http.Request) {
 		capsOff := r.FormValue("keep_caps") == ""
 		p.Settings.EmphasisColor = r.FormValue("emphasis_color")
 		p.Settings.ForceCapsOff = &capsOff
+		highlight := r.FormValue("highlight_bold") != ""
+		p.Settings.HighlightBold = &highlight
 	} else {
 		p.Settings.AudienceLooks = map[string]style.Look{}
 		for k, v := range ss.looks {

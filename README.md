@@ -57,7 +57,8 @@ The installer:
 - builds the app into `/opt/propresenter-toolkit/pptoolkit`;
 - creates a `propresenter-toolkit` system user and a systemd service of the same name;
 - writes settings to `/etc/propresenter-toolkit.env` (first run only);
-- keeps styles in `/var/lib/propresenter-toolkit/styles`, seeded with two example styles.
+- keeps styles in `/var/lib/propresenter-toolkit/styles`, seeded with the
+  built-in styles (below).
 
 It prints the address when it's done, e.g. `http://192.168.1.50`. The app
 listens on port 80, so no `:port` is needed.
@@ -131,6 +132,23 @@ rm -rf /opt/propresenter-toolkit /etc/systemd/system/propresenter-toolkit.servic
 ```
 
 Remove `/var/lib/propresenter-toolkit` too if you don't want the styles.
+
+## Built-in styles
+
+| Style | Kind | Result |
+|---|---|---|
+| Message (Prompts) | Prompts | white text; bold words from the PDF in yellow |
+| Message (Prompts, all yellow) | Prompts | all text yellow |
+| Message (Prompts, plain) | Prompts | all text white, nothing highlighted |
+| 2026-09-27 (Slides) | Slides | Title / Point / Keyword / Scripture slides with Audience Looks |
+
+The three Prompts styles use the same template slide, so the font, size and box
+are identical; only the colours differ. Your own styles can do the same with the
+**Highlight bold words** option in the Style Manager.
+
+Built-in styles are copied into the styles folder when the app starts. A
+built-in style added in a later version appears automatically. One you've
+deleted doesn't come back, and one you've edited is never overwritten.
 
 ## Known gap: "Point L3" in the example Slides style
 
