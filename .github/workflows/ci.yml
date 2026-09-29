@@ -42,7 +42,7 @@ jobs:
           sudo sed -i 's/^PPT_ADDR=.*/PPT_ADDR=:5000/' /etc/propresenter-toolkit.env
           echo 'PPT_AUTH=team:secret' | sudo tee -a /etc/propresenter-toolkit.env
           sudo sh deploy/install.sh
-          grep -qx 'PPT_ADDR=:80' /etc/propresenter-toolkit.env
+          sudo grep -qx 'PPT_ADDR=:80' /etc/propresenter-toolkit.env
           test "$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1/)" = 401
           curl -fsS -u team:secret http://127.0.0.1/ | grep -q "Convert a PDF"
       - name: Logs
