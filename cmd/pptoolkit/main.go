@@ -6,6 +6,10 @@
 //	-addr    PPT_ADDR        listen address          (default ":5000")
 //	-styles  PPT_STYLES_DIR  style profiles folder   (default "styles")
 //	-auth    PPT_AUTH        "user:password" login   (default: none)
+//
+// For HTTPS with an automatic Let's Encrypt certificate, also set
+// PPT_DOMAIN and PPT_CLOUDFLARE_API_TOKEN (see tls.go); -addr then serves
+// a redirect to https.
 package main
 
 import (
@@ -62,10 +66,18 @@ func run(args []string) error {
 		return err
 	}
 
-	log.Printf("ProPresenter Toolkit %s listening on %s (styles: %s)", version, *addr, store.Dir)
 	if cfg.Username == "" {
 		log.Printf("No login required - set PPT_AUTH to add one.")
 	}
+	tlsCfg, err := tlsFromEnv(store.Dir)
+	if err != nil {
+		return err
+	}
+	if tlsCfg != nil {
+		log.Printf("ProPresenter Toolkit %s (styles: %s)", version, store.Dir)
+		return serveTLS(tlsCfg, *addr, srv)
+	}
+	log.Printf("ProPresenter Toolkit %s listening on %s (styles: %s)", version, *addr, store.Dir)
 	hs := &http.Server{Addr: *addr, Handler: srv, ReadHeaderTimeout: 10 * time.Second}
 	return hs.ListenAndServe()
 }

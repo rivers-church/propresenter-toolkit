@@ -70,7 +70,7 @@ As root in the container:
 
 The installer:
 
-- uses Debian's Go if it's new enough (Debian 13), otherwise installs the
+- uses the system's Go if it's new enough (1.26+), otherwise installs the
   official Go release into `/usr/local/go`;
 - builds the app into `/opt/propresenter-toolkit/pptoolkit`;
 - creates a `propresenter-toolkit` system user and a systemd service of the same name;
@@ -96,6 +96,47 @@ With no DNS server of your own, install `avahi-daemon` in the container
 instead. It then answers at `http://<container-hostname>.local` on Macs,
 iPhones and Windows 10/11.
 
+### HTTPS (recommended)
+
+Browsers increasingly try `https://` first, and a site that only speaks
+HTTP then works on some devices and not others. If the domain's DNS is on
+Cloudflare, the app can get and renew its own free Let's Encrypt certificate.
+It proves ownership with a temporary DNS record, so this works even though
+the site is only reachable inside your network.
+
+1. In Cloudflare: **My Profile → API Tokens → Create Token → Create Custom
+   Token**.
+   - Permissions: **Zone / Zone / Read** and **Zone / DNS / Edit**.
+   - Zone Resources: **Include / Specific zone / your domain** (e.g.
+     `rivers.church`).
+2. In `/etc/propresenter-toolkit.env`, set:
+
+   ```text
+   PPT_DOMAIN=protoolkit.rivers.church
+   PPT_CLOUDFLARE_API_TOKEN=<the token>
+   ```
+
+3. Restart the service:
+
+   ```bash
+   systemctl restart propresenter-toolkit
+   ```
+
+   Watch the first certificate arrive (it takes a minute or two):
+
+   ```bash
+   journalctl -u propresenter-toolkit -f
+   ```
+
+The app then serves `https://protoolkit.rivers.church` on port 443, and plain
+HTTP on port 80 redirects there. Certificates are kept in
+`/var/lib/propresenter-toolkit/certs` and renew automatically. The container
+needs outbound internet access, to reach Let's Encrypt, the Cloudflare API and
+public DNS (`1.1.1.1` / `8.8.8.8`) for checking the record.
+
+The internal DNS record pointing the name at the container stays as it is.
+Nothing about the site becomes public.
+
 ### Settings
 
 Edit `/etc/propresenter-toolkit.env`, then run
@@ -106,6 +147,9 @@ Edit `/etc/propresenter-toolkit.env`, then run
 | `PPT_ADDR` | `:80` | address and port to listen on |
 | `PPT_STYLES_DIR` | `/var/lib/propresenter-toolkit/styles` | style profiles folder |
 | `PPT_AUTH` | *(empty)* | `user:password` to require a login |
+| `PPT_DOMAIN` | *(empty)* | domain for HTTPS (see above); empty = plain HTTP |
+| `PPT_CLOUDFLARE_API_TOKEN` | *(empty)* | Cloudflare token for the HTTPS certificate |
+| `PPT_ACME_EMAIL` | *(empty)* | optional address for certificate expiry notices |
 
 There's no login unless you set `PPT_AUTH`, so anyone who can reach the port
 can use the app and edit styles. That's fine on a trusted LAN. Otherwise set
@@ -192,7 +236,7 @@ the Style Manager from a `.pro` that has a slide set to "Point L3", and clicking
 
 ## Development
 
-Needs Go 1.24.1 or newer.
+Needs Go 1.26 or newer.
 
 ```bash
 go run ./cmd/pptoolkit
