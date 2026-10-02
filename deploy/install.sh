@@ -144,6 +144,19 @@ else
   fi
 fi
 
+# --- update command -------------------------------------------------------------
+# Remembers where this checkout lives, so updating is one command.
+UPDATE_CMD=/usr/local/sbin/$APP-update
+cat >"$UPDATE_CMD" <<EOF
+#!/bin/sh
+# Update ProPresenter Toolkit from its source checkout and reinstall.
+# Written by $REPO_DIR/deploy/install.sh
+set -eu
+git -c safe.directory="$REPO_DIR" -C "$REPO_DIR" pull --ff-only
+exec sh "$REPO_DIR/deploy/install.sh"
+EOF
+chmod 0755 "$UPDATE_CMD"
+
 # --- service ------------------------------------------------------------------
 say "Installing systemd service"
 cat >"$UNIT_FILE" <<EOF
@@ -196,6 +209,7 @@ if systemctl is-active --quiet "$APP"; then
   echo "Settings: $ENV_FILE"
   echo "Styles:   $DATA_DIR/styles"
   echo "Logs:     journalctl -u $APP -f"
+  echo "Update:   $APP-update   (source: $REPO_DIR)"
 else
   echo "The service didn't start. See: journalctl -u $APP -e" >&2
   exit 1

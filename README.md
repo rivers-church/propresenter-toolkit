@@ -158,15 +158,22 @@ reverse proxy (Caddy/nginx) with HTTPS rather than opening the port.
 
 ### Updating
 
-```bash
-git -C /opt/src/propresenter-toolkit pull
-```
+As root:
 
 ```bash
-sh /opt/src/propresenter-toolkit/deploy/install.sh
+propresenter-toolkit-update
 ```
 
-Settings and styles are kept.
+That pulls the latest code into the checkout you installed from and re-runs
+the installer. Settings and styles are kept. Installs from before this
+command existed need one manual update first, from wherever the repo was
+cloned. To find it:
+
+```bash
+find / -name install.sh -path "*/deploy/*" -not -path "/proc/*" 2>/dev/null
+```
+
+Then `git -C <that folder> pull` and `sh <that folder>/deploy/install.sh`.
 
 ### Day-to-day
 

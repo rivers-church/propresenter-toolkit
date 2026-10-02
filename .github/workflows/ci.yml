@@ -44,6 +44,7 @@ jobs:
           sudo sh deploy/install.sh
           sudo grep -qx 'PPT_ADDR=:80' /etc/propresenter-toolkit.env
           sudo grep -qx 'PPT_DOMAIN=' /etc/propresenter-toolkit.env
+          test -x /usr/local/sbin/propresenter-toolkit-update
           test "$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1/)" = 401
           curl -fsS -u team:secret http://127.0.0.1/ | grep -q "Convert a PDF"
       - name: Logs
