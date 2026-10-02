@@ -40,7 +40,9 @@ version_ok() { # version_ok 1.24.4 -> true if >= MIN_GO
   [ "$(printf '%s\n%s\n' "$MIN_GO" "$1" | sort -V | head -n1)" = "$MIN_GO" ]
 }
 go_version() {
-  "$1" env GOVERSION 2>/dev/null | sed 's/^go//'
+  # Ask from outside the repo with GOTOOLCHAIN=local: inside it, an older Go
+  # would quietly fetch the version go.mod asks for and report that instead.
+  (cd / && GOTOOLCHAIN=local "$1" env GOVERSION 2>/dev/null) | sed 's/^go//'
 }
 find_go() {
   for g in /usr/local/go/bin/go "$(command -v go 2>/dev/null || true)" /usr/lib/go/bin/go; do
