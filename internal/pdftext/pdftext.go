@@ -147,7 +147,12 @@ func pageLines(page pdf.Page, pageNum int, opt Options) (lines []Line, err error
 		if t.S == "\n" || t.S == "\r" || t.S == "" {
 			continue
 		}
-		s := ligatures.Replace(t.S)
+		// U+FFFD is a character the font had no Unicode mapping for
+		// (Microsoft Print to PDF emits one at the end of each paragraph).
+		s := strings.ReplaceAll(ligatures.Replace(t.S), "\uFFFD", "")
+		if s == "" {
+			continue
+		}
 		g := glyph{s: s, font: t.Font, size: t.FontSize, x: t.X, y: t.Y, w: t.W, seq: i}
 		if c, ok := colors[keyAt(t.X, t.Y)]; ok {
 			switch {
@@ -173,8 +178,13 @@ func pageLines(page pdf.Page, pageNum int, opt Options) (lines []Line, err error
 	}
 
 	for _, row := range rows {
+		// Some exporters (e.g. Microsoft Print to PDF, which uses CID fonts)
+		// give the PDF library no glyph widths, so every x is noise. The
+		// content stream is still in reading order, so keep that order and
+		// rely on explicit space glyphs for word breaks.
+		streamOrder := !hasWidths(row)
 		sort.Slice(row, func(i, j int) bool {
-			if row[i].x != row[j].x {
+			if !streamOrder && row[i].x != row[j].x {
 				return row[i].x < row[j].x
 			}
 			return row[i].seq < row[j].seq
@@ -182,7 +192,7 @@ func pageLines(page pdf.Page, pageNum int, opt Options) (lines []Line, err error
 		if opt.DropSuperscriptDigits {
 			row = dropSuperscriptDigits(row)
 		}
-		if runs := buildRuns(row); len(runs) > 0 {
+		if runs := buildRuns(row, streamOrder); len(runs) > 0 {
 			l := Line{Page: pageNum, Runs: runs, Y: row[0].y, X0: math.Inf(1), X1: math.Inf(-1)}
 			for _, g := range row {
 				if strings.TrimSpace(g.s) == "" {
@@ -196,6 +206,17 @@ func pageLines(page pdf.Page, pageNum int, opt Options) (lines []Line, err error
 		}
 	}
 	return lines, nil
+}
+
+// hasWidths reports whether the row's glyphs carry usable advance widths,
+// i.e. whether their x positions can be trusted for ordering.
+func hasWidths(row []glyph) bool {
+	for _, g := range row {
+		if strings.TrimSpace(g.s) != "" && g.w > 0 {
+			return true
+		}
+	}
+	return false
 }
 
 func dropSuperscriptDigits(row []glyph) []glyph {
@@ -228,11 +249,12 @@ func isDigits(s string) bool {
 	return true
 }
 
-// buildRuns turns x-ordered glyphs into one run per word, breaking at
+// buildRuns turns x-ordered glyphs (or, when streamOrder, stream-ordered
+// glyphs whose positions are unreliable and so never imply a space) into one run per word, breaking at
 // explicit spaces or visible gaps. A word whose weight changes part-way
 // through (e.g. a bold word followed by a regular comma) is split into
 // runs with SpaceBefore=false, so no stray space appears.
-func buildRuns(row []glyph) []Run {
+func buildRuns(row []glyph, streamOrder bool) []Run {
 	var runs []Run
 	pendingSpace := false
 	prevEnd := math.Inf(-1)
@@ -243,7 +265,7 @@ func buildRuns(row []glyph) []Run {
 			prevEnd = g.x + g.w
 			continue
 		}
-		if g.x-prevEnd > xTolerance {
+		if !streamOrder && g.x-prevEnd > xTolerance {
 			pendingSpace = true
 		}
 		prevEnd = g.x + g.w

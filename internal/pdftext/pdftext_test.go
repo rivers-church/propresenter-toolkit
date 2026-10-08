@@ -61,7 +61,7 @@ func TestBuildRunsSplitsWeightChangeWithoutSpace(t *testing.T) {
 		{s: " ", font: "X-Book", x: 13, w: 3},
 		{s: "y", font: "X-Book", x: 16, w: 5},
 	}
-	got := buildRuns(row)
+	got := buildRuns(row, false)
 	want := []Run{{Text: "hi", Bold: true}, {Text: ","}, {Text: "y", SpaceBefore: true}}
 	if len(got) != len(want) {
 		t.Fatalf("got %+v", got)

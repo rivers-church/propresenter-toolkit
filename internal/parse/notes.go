@@ -52,17 +52,21 @@ func (e Entry) Summary() (kind, text string) {
 }
 
 var (
-	scriptureRE = regexp.MustCompile(`^([1-3]?\s?[A-Za-z][A-Za-z ]*)\s+(\d+:\d+(?:-\d+)?)\s*\(?([A-Za-z]{2,6})\)?$`)
-	pointRE     = regexp.MustCompile(`(?i)^(POINT|CONDITION|DRIVEN)\s+(\d+)\s*:\s*(.+)$`)
-	titleRE     = regexp.MustCompile(`(?i)^Title\s*:\s*(.+)$`)
-	imageRE     = regexp.MustCompile(`(?i)^Image\s*:\s*(.+)$`)
-	backToRE    = regexp.MustCompile(`(?i)^Back to (.+?) when I say:\s*(.+)$`)
-	verseNumRE  = regexp.MustCompile(`^\d{1,3}$`)
-	spacesRE    = regexp.MustCompile(`\s+`)
+	scriptureRE = regexp.MustCompile(`^([1-3]?\s?[A-Za-z][A-Za-z ]*)\s+(\d+:\d+(?:-\d+)?)\s*\(?([A-Za-z]{2,6})?\)?$`)
+	pointRE     = regexp.MustCompile(`(?i)^(SUB\s?POINT|POINT|CONDITION|DRIVEN)\s+(\d+)\s*(?::\s*(.*)|\s+(.+))$`)
+	// "Scripture:" on a line of its own introduces a reference on the next
+	// line (which may be a non-biblical source such as "African Proverb").
+	scriptureMarkerRE = regexp.MustCompile(`(?i)^Scripture\s*:\s*$`)
+	titleRE           = regexp.MustCompile(`(?i)^Title\s*:\s*(.+)$`)
+	imageRE           = regexp.MustCompile(`(?i)^Image\s*:\s*(.+)$`)
+	backToRE          = regexp.MustCompile(`(?i)^Back to (.+?) when I say:\s*(.+)$`)
+	leadingVerseNumRE = regexp.MustCompile(`^\d{1,3}\s+`)
+	verseNumRE        = regexp.MustCompile(`^\d{1,3}$`)
+	spacesRE          = regexp.MustCompile(`\s+`)
 )
 
 func isLabelLine(s string) bool {
-	return pointRE.MatchString(s) || titleRE.MatchString(s) || imageRE.MatchString(s) ||
+	return scriptureMarkerRE.MatchString(s) || pointRE.MatchString(s) || titleRE.MatchString(s) || imageRE.MatchString(s) ||
 		backToRE.MatchString(s) || scriptureRE.MatchString(s)
 }
 
@@ -119,15 +123,32 @@ func Notes(rawLines []string) (entries []Entry, unrecognized []string) {
 		}
 		if m := pointRE.FindStringSubmatch(line); m != nil {
 			extra, next := continuation(i + 1)
-			label := capitalize(m[1]) + " " + m[2]
-			entries = append(entries, Entry{Kind: KindPoint, Label: label, Text: join(m[3], extra)})
+			label := capitalize(strings.ReplaceAll(m[1], " ", "")) + " " + m[2]
+			entries = append(entries, Entry{Kind: KindPoint, Label: label, Text: join(m[3]+m[4], extra)})
 			i = next
 			continue
 		}
+		if scriptureMarkerRE.MatchString(line) {
+			if i+1 < n && !scriptureMarkerRE.MatchString(lines[i+1]) {
+				i++
+				line = lines[i]
+				ref := spacesRE.ReplaceAllString(line, " ")
+				if m := scriptureRE.FindStringSubmatch(line); m != nil {
+					ref = scriptureRef(m)
+				}
+				verse, next := continuation(i + 1)
+				verse = cleanVerse(verse)
+				entries = append(entries, Entry{Kind: KindScripture, Reference: ref, Verse: verse})
+				i = next
+				continue
+			}
+			i++ // a "Scripture:" label with nothing after it
+			continue
+		}
 		if m := scriptureRE.FindStringSubmatch(line); m != nil {
-			ref := strings.TrimSpace(m[1]) + " " + m[2] + " " + strings.ToUpper(m[3])
+			ref := scriptureRef(m)
 			verse, next := continuation(i + 1)
-			verse = strings.TrimSpace(spacesRE.ReplaceAllString(verse, " "))
+			verse = cleanVerse(verse)
 			entries = append(entries, Entry{Kind: KindScripture, Reference: ref, Verse: verse})
 			i = next
 			continue
@@ -136,6 +157,21 @@ func Notes(rawLines []string) (entries []Entry, unrecognized []string) {
 		i++
 	}
 	return entries, unrecognized
+}
+
+// cleanVerse collapses whitespace and drops a leading verse number
+// ("16 But Jesus..."), which isn't part of the text to display.
+func cleanVerse(v string) string {
+	v = strings.TrimSpace(spacesRE.ReplaceAllString(v, " "))
+	return leadingVerseNumRE.ReplaceAllString(v, "")
+}
+
+func scriptureRef(m []string) string {
+	ref := strings.TrimSpace(m[1]) + " " + m[2]
+	if m[3] != "" {
+		ref += " " + strings.ToUpper(m[3])
+	}
+	return ref
 }
 
 func capitalize(s string) string {

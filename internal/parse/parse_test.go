@@ -101,3 +101,38 @@ func TestNotesUnrecognized(t *testing.T) {
 		t.Errorf("unrecognized = %v", unrec)
 	}
 }
+
+func TestNotesLenientLabels(t *testing.T) {
+	entries, unrec := Notes([]string{
+		"Title: Run",
+		"Point 1 Slow down",
+		"subPoint 1: SLOW DOWN",
+		"Subpoint 2:",
+		"WITH People",
+		"Scripture:",
+		"African Proverb",
+		"“Go far, go together”",
+		"Scripture:",
+		"Ephesians 6:16",
+		"16 Take up the shield",
+	})
+	if len(unrec) != 0 {
+		t.Errorf("unrecognized = %q", unrec)
+	}
+	want := []Entry{
+		{Kind: KindTitle, Text: "Run"},
+		{Kind: KindPoint, Label: "Point 1", Text: "Slow down"},
+		{Kind: KindPoint, Label: "Subpoint 1", Text: "SLOW DOWN"},
+		{Kind: KindPoint, Label: "Subpoint 2", Text: "WITH People"},
+		{Kind: KindScripture, Reference: "African Proverb", Verse: "“Go far, go together”"},
+		{Kind: KindScripture, Reference: "Ephesians 6:16", Verse: "Take up the shield"},
+	}
+	if len(entries) != len(want) {
+		t.Fatalf("got %d entries %+v, want %d", len(entries), entries, len(want))
+	}
+	for i := range want {
+		if entries[i] != want[i] {
+			t.Errorf("entry %d = %+v, want %+v", i, entries[i], want[i])
+		}
+	}
+}
