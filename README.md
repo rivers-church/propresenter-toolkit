@@ -221,6 +221,11 @@ deleted doesn't come back, and one you've edited is never overwritten.
 
 ## Limitations
 
+- **Audience Look UUIDs are per machine.** ProPresenter gives each look a UUID
+  that is only valid on the install it came from, so the built-in Slides style
+  only resolves its looks on the machine it was captured on. On any other
+  machine, make your own Slides style in the Style Manager from a `.pro` saved
+  there. This is an unofficial beta tool, so that is the supported route for now.
 - **Verse pacing isn't automatic.** A passage lands on one Scripture slide;
   split it in ProPresenter for a verse-by-verse reveal.
 - **Bold detection is font-name based**: fonts named `Heavy`, `Black` or `Bold`.
