@@ -237,12 +237,28 @@ func TextBox(st *style.Profile) (metrics.Box, error) {
 
 // ----------------------------------------------------------------- slides --
 
+// SlideOptions tune BuildSlides.
+type SlideOptions struct {
+	// DefaultCopies adds, straight after every title, point and subpoint
+	// slide, an identical copy that carries the style's Default Audience
+	// Look (its "backto" look) instead of the role's own.
+	DefaultCopies bool
+	// DisableCopies marks those copies disabled, so ProPresenter greys
+	// them out and skips them when stepping through the presentation.
+	DisableCopies bool
+}
+
 // BuildSlides makes slides from a parsed notes outline, cloning the
 // style's title / point / keyword / scripture templates.
-func BuildSlides(st *style.Profile, entries []parse.Entry, name string) ([]byte, Report, error) {
+func BuildSlides(st *style.Profile, entries []parse.Entry, name string, opt SlideOptions) ([]byte, Report, error) {
 	var rep Report
 	color := st.Settings.Regular()
 	looks := st.Settings.AudienceLooks
+	if opt.DefaultCopies {
+		if l, ok := looks[style.RoleBackTo]; !ok || l.UUID == "" {
+			return nil, rep, fmt.Errorf("style %q has no Default Audience Look to put on the copies (set the “Back to” look in the Style Manager)", st.Name)
+		}
+	}
 	b := newBuilder(name)
 	byLabel := map[string]int{} // lower-cased label -> cue index, for "Back to"
 
@@ -306,6 +322,16 @@ func BuildSlides(st *style.Profile, entries []parse.Entry, name string) ([]byte,
 		finish(cue, action, style.RoleBackTo)
 	}
 
+	// defaultCopy appends a duplicate of cue src with the Default look.
+	defaultCopy := func(src int) {
+		if !opt.DefaultCopies {
+			return
+		}
+		cue := proto.Clone(b.p.Cues[src]).(*pb.Cue)
+		cue.IsEnabled = !opt.DisableCopies
+		finish(cue, SlideAction(cue), style.RoleBackTo)
+	}
+
 	for _, e := range entries {
 		switch e.Kind {
 		case parse.KindTitle:
@@ -314,9 +340,10 @@ func BuildSlides(st *style.Profile, entries []parse.Entry, name string) ([]byte,
 				return nil, rep, err
 			}
 			byLabel["title"] = idx
+			defaultCopy(idx)
 		case parse.KindPoint:
 			role := style.RoleKeyword
-			if strings.HasPrefix(strings.ToLower(e.Label), "point") {
+			if l := strings.ToLower(e.Label); strings.HasPrefix(l, "point") || strings.HasPrefix(l, "subpoint") {
 				role = style.RolePoint
 			}
 			idx, err := addText(role, e.Text, e.Label)
@@ -324,6 +351,7 @@ func BuildSlides(st *style.Profile, entries []parse.Entry, name string) ([]byte,
 				return nil, rep, err
 			}
 			byLabel[strings.ToLower(e.Label)] = idx
+			defaultCopy(idx)
 		case parse.KindScripture:
 			idx, err := addScripture(e.Reference, e.Verse)
 			if err != nil {

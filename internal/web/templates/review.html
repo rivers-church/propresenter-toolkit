@@ -7,6 +7,16 @@
 {{range .Data.Warnings}}<div class="flash warn">{{.}}</div>{{end}}
 
 <form method="post" action="/convert/{{$token}}/download" class="actions">
+  {{if eq (printf "%v" .Data.Job.Mode) "slides"}}
+  <label class="check">
+    <input type="checkbox" name="default_copies" value="1">
+    Also add a copy of every title, point and subpoint slide with the Default look
+  </label>
+  <label class="check">
+    <input type="checkbox" name="disable_copies" value="1" checked>
+    Disable those copies (greyed out in ProPresenter)
+  </label>
+  {{end}}
   <button class="primary" type="submit">Download .pro</button>
   <a class="button" href="/">Start over</a>
 </form>

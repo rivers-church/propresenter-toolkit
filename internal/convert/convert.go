@@ -38,15 +38,17 @@ type Options struct {
 
 // Job is a parsed PDF waiting to be reviewed and turned into a .pro.
 type Job struct {
-	Mode         style.Kind
-	StyleName    string
-	Name         string
-	Prompts      []parse.PromptSlide // Mode == prompts
-	Freeform     bool                // prompts: no SLIDE markers, split by layout
-	MaxLines     int                 // prompts: soft line limit used for freeform
-	Colors       ColorMode           // prompts
-	Entries      []parse.Entry       // Mode == slides
-	Unrecognized []string            // slides: lines that matched no label
+	Mode          style.Kind
+	StyleName     string
+	Name          string
+	Prompts       []parse.PromptSlide // Mode == prompts
+	Freeform      bool                // prompts: no SLIDE markers, split by layout
+	MaxLines      int                 // prompts: soft line limit used for freeform
+	Colors        ColorMode           // prompts
+	DisableCopies bool                // slides: mark those copies disabled
+	DefaultCopies bool                // slides: also add Default-look copies of title/point slides
+	Entries       []parse.Entry       // Mode == slides
+	Unrecognized  []string            // slides: lines that matched no label
 }
 
 // Row is one line of the review table.
@@ -186,7 +188,7 @@ func (j *Job) Build(st *style.Profile) ([]byte, pro.Report, error) {
 		data, err := pro.BuildPrompts(st, j.Prompts, j.Name, pro.PromptOptions{PDFColors: j.PDFColors()})
 		return data, pro.Report{}, err
 	}
-	return pro.BuildSlides(st, j.Entries, j.Name)
+	return pro.BuildSlides(st, j.Entries, j.Name, pro.SlideOptions{DefaultCopies: j.DefaultCopies, DisableCopies: j.DisableCopies})
 }
 
 // FileName turns a presentation name into a safe .pro file name.

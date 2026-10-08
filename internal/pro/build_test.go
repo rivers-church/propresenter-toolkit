@@ -139,7 +139,7 @@ func TestBuildSlides(t *testing.T) {
 		{Kind: parse.KindBackTo, Ref: "Point 1", Trigger: "What does Paul mean?"},
 		{Kind: parse.KindBackTo, Ref: "Point 9", Trigger: "Nowhere"},
 	}
-	data, rep, err := BuildSlides(st, entries, "Slides Test")
+	data, rep, err := BuildSlides(st, entries, "Slides Test", SlideOptions{})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -198,5 +198,50 @@ func TestPromptsFromPDF(t *testing.T) {
 	}
 	if _, err := Parse(data); err != nil {
 		t.Fatal(err)
+	}
+}
+
+func TestBuildSlidesDefaultCopies(t *testing.T) {
+	st := defaultStyle(t, style.KindSlides)
+	entries := []parse.Entry{
+		{Kind: parse.KindTitle, Text: "T"},
+		{Kind: parse.KindScripture, Reference: "John 1:1 NIV", Verse: "In the beginning"},
+		{Kind: parse.KindPoint, Label: "Point 1", Text: "P"},
+		{Kind: parse.KindPoint, Label: "Subpoint 1", Text: "S"},
+	}
+	data, _, err := BuildSlides(st, entries, "x", SlideOptions{DefaultCopies: true, DisableCopies: true})
+	if err != nil {
+		t.Fatal(err)
+	}
+	p, err := Parse(data)
+	if err != nil {
+		t.Fatal(err)
+	}
+	checkIdentities(t, p)
+
+	def := st.Settings.AudienceLooks[style.RoleBackTo].Name
+	point := st.Settings.AudienceLooks[style.RolePoint].Name
+	type want struct{ name, text, look string }
+	wants := []want{
+		{"Title", "T", st.Settings.AudienceLooks[style.RoleTitle].Name},
+		{"Title", "T", def},
+		{"John 1:1 NIV", "John 1:1 NIV | In the beginning", st.Settings.AudienceLooks[style.RoleScripture].Name},
+		{"Point 1", "P", point},
+		{"Point 1", "P", def},
+		{"Subpoint 1", "S", point}, // subpoints use the Point look and template
+		{"Subpoint 1", "S", def},
+	}
+	cues := ListCues(p)
+	if len(cues) != len(wants) {
+		t.Fatalf("got %d cues, want %d", len(cues), len(wants))
+	}
+	for i, w := range wants {
+		c := cues[i]
+		if c.Name != w.name || c.Label != w.name || c.Preview != w.text || c.Look == nil || c.Look.Name != w.look {
+			t.Errorf("cue %d = %q / %q / %q / %+v, want %+v", i, c.Name, c.Label, c.Preview, c.Look, w)
+		}
+		if got, want := p.GetCues()[i].GetIsEnabled(), w.look != def; got != want {
+			t.Errorf("cue %d enabled = %v, want %v", i, got, want)
+		}
 	}
 }
