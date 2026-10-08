@@ -219,14 +219,6 @@ Built-in styles are copied into the styles folder when the app starts. A
 built-in style added in a later version appears automatically. One you've
 deleted doesn't come back, and one you've edited is never overwritten.
 
-## Known gap: "Point L3" in the example Slides style
-
-The sample file used to build the example `2026-09-27 (Slides)` style had no
-slide using the "Point L3" Audience Look, so that role has a placeholder UUID
-that won't resolve in ProPresenter. Fix it once by making a new Slides style in
-the Style Manager from a `.pro` that has a slide set to "Point L3", and clicking
-**Point** on that slide.
-
 ## Limitations
 
 - **Verse pacing isn't automatic.** A passage lands on one Scripture slide;
