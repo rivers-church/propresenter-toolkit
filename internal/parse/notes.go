@@ -46,20 +46,38 @@ func (e Entry) Summary() (kind, text string) {
 	case KindImage:
 		return "Image (skipped)", e.Text
 	case KindBackTo:
+		if e.Trigger == "" {
+			return "Back to " + e.Ref, "(same slide again)"
+		}
 		return "Back to " + e.Ref, e.Trigger
 	}
 	return string(e.Kind), e.Text
 }
 
 var (
-	scriptureRE = regexp.MustCompile(`^([1-3]?\s?[A-Za-z][A-Za-z ]*)\s+(\d+:\d+(?:-\d+)?)\s*\(?([A-Za-z]{2,6})?\)?$`)
-	pointRE     = regexp.MustCompile(`(?i)^(SUB\s?POINT|POINT|CONDITION|DRIVEN)\s+(\d+)\s*(?::\s*(.*)|\s+(.+))$`)
+	// A reference line: book, chapter:verses, optional version. The verses
+	// can be a range or a comma list, and a trailing "says:" is allowed:
+	//   "Ephesians 2:1-10 (NIV)"
+	//   "1 Samuel 17:1-5,8-16,24-26,31-37 (NIV)"
+	//   "2 Samuel 3:1 (HCSB) says:"
+	scriptureRE = regexp.MustCompile(`^([1-3]?\s?[A-Za-z][A-Za-z ]*?)\s+` +
+		`(\d+:\d+(?:\s*[-–]\s*\d+(?::\d+)?)?` + // 17:1, 17:1-5, 3:1–4:2
+		`(?:\s*,\s*\d+(?::\d+)?(?:\s*[-–]\s*\d+(?::\d+)?)?)*)` + // ,8-16 ,24
+		`\s*\(?([A-Za-z]{2,6})?\)?(?:\s+says)?\s*:?$`)
+	pointRE = regexp.MustCompile(`(?i)^(SUB\s?POINT|POINT|CONDITION|DRIVEN)\s+(\d+)\s*(?::\s*(.*)|\s+(.+))$`)
+	// Any other ALL-CAPS label, e.g. "TRUTH: Sin is a momentum killer".
+	capsLabelRE = regexp.MustCompile(`^([A-Z]{3,})(?:\s+(\d+))?\s*:\s*(.+)$`)
 	// "Scripture:" on a line of its own introduces a reference on the next
 	// line (which may be a non-biblical source such as "African Proverb").
 	scriptureMarkerRE = regexp.MustCompile(`(?i)^Scripture\s*:\s*$`)
 	titleRE           = regexp.MustCompile(`(?i)^Title\s*:\s*(.+)$`)
 	imageRE           = regexp.MustCompile(`(?i)^Image\s*:\s*(.+)$`)
-	backToRE          = regexp.MustCompile(`(?i)^Back to (.+?) when I say:\s*(.+)$`)
+	// "Back to Point 1 when I say: …" (any label), or the short forms
+	// "Back to Point 1" and "Back to Title: “…”". The short form only
+	// accepts Title or a numbered label, so verse text such as "back to
+	// Jerusalem" isn't mistaken for one.
+	backToRE          = regexp.MustCompile(`(?i)^Back to (.+?) when I say\s*:\s*(.*)$`)
+	backToShortRE     = regexp.MustCompile(`^Back to ((?i:title)|[A-Za-z]+ \d+)\s*(?::\s*(.*))?$`)
 	leadingVerseNumRE = regexp.MustCompile(`^\d{1,3}\s+`)
 	verseNumRE        = regexp.MustCompile(`^\d{1,3}$`)
 	spacesRE          = regexp.MustCompile(`\s+`)
@@ -67,7 +85,18 @@ var (
 
 func isLabelLine(s string) bool {
 	return scriptureMarkerRE.MatchString(s) || pointRE.MatchString(s) || titleRE.MatchString(s) || imageRE.MatchString(s) ||
-		backToRE.MatchString(s) || scriptureRE.MatchString(s)
+		backToRE.MatchString(s) || backToShortRE.MatchString(s) || scriptureRE.MatchString(s) || isCapsLabel(s)
+}
+
+// isCapsLabel matches labels like "TRUTH: …" that aren't handled elsewhere.
+func isCapsLabel(s string) bool {
+	m := capsLabelRE.FindStringSubmatch(s)
+	return m != nil && m[1] != "TITLE" && m[1] != "IMAGE" && m[1] != "SCRIPTURE"
+}
+
+// unquote trims surrounding quote marks from a trigger phrase.
+func unquote(s string) string {
+	return strings.TrimSpace(strings.Trim(strings.TrimSpace(s), `"“”'‘’`))
 }
 
 // Notes parses a labelled outline. Lines that don't match any known label
@@ -115,9 +144,17 @@ func Notes(rawLines []string) (entries []Entry, unrecognized []string) {
 			i = next
 			continue
 		}
-		if m := backToRE.FindStringSubmatch(line); m != nil {
+		m := backToRE.FindStringSubmatch(line)
+		if m == nil {
+			m = backToShortRE.FindStringSubmatch(line)
+		}
+		if m != nil {
 			extra, next := continuation(i + 1)
-			entries = append(entries, Entry{Kind: KindBackTo, Ref: strings.TrimSpace(m[1]), Trigger: join(m[2], extra)})
+			ref := strings.TrimSpace(m[1])
+			if strings.EqualFold(ref, "title") {
+				ref = "Title"
+			}
+			entries = append(entries, Entry{Kind: KindBackTo, Ref: ref, Trigger: unquote(join(m[2], extra))})
 			i = next
 			continue
 		}
@@ -153,6 +190,17 @@ func Notes(rawLines []string) (entries []Entry, unrecognized []string) {
 			i = next
 			continue
 		}
+		if isCapsLabel(line) {
+			m := capsLabelRE.FindStringSubmatch(line)
+			extra, next := continuation(i + 1)
+			label := capitalize(m[1])
+			if m[2] != "" {
+				label += " " + m[2]
+			}
+			entries = append(entries, Entry{Kind: KindPoint, Label: label, Text: join(m[3], extra)})
+			i = next
+			continue
+		}
 		unrecognized = append(unrecognized, line)
 		i++
 	}
@@ -167,7 +215,8 @@ func cleanVerse(v string) string {
 }
 
 func scriptureRef(m []string) string {
-	ref := strings.TrimSpace(m[1]) + " " + m[2]
+	verses := strings.Join(strings.Fields(m[2]), "") // "1-5, 8-16" -> "1-5,8-16"
+	ref := strings.TrimSpace(m[1]) + " " + verses
 	if m[3] != "" {
 		ref += " " + strings.ToUpper(m[3])
 	}

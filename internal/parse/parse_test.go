@@ -136,3 +136,43 @@ func TestNotesLenientLabels(t *testing.T) {
 		}
 	}
 }
+
+// Formats from "The Momentum Effect" notes: comma verse lists, "says:",
+// short Back-to forms and other ALL-CAPS labels.
+func TestNotesLooserFormats(t *testing.T) {
+	lines := []string{
+		"THE MOMENTUM EFFECT",
+		"1 Samuel 17:1-5,8-16, 24-26 (NIV)",
+		"Now the Philistines gathered.",
+		"Title: The Momentum Effect",
+		"POINT 1: Momentum makes hard things easier",
+		"2 Samuel 3:1 (HCSB) says:",
+		"The war between the house of Saul",
+		"Back to Point 1",
+		"TRUTH: Sin is a momentum killer",
+		"Back to Point 1: “Not only that”",
+		"Back to Title: “David’s life serves as a powerful",
+		"reminder”",
+		"So they went back to Jerusalem.",
+		"Back to Title",
+	}
+	entries, unrec := Notes(lines)
+	want := []Entry{
+		{Kind: KindScripture, Reference: "1 Samuel 17:1-5,8-16,24-26 NIV", Verse: "Now the Philistines gathered."},
+		{Kind: KindTitle, Text: "The Momentum Effect"},
+		{Kind: KindPoint, Label: "Point 1", Text: "Momentum makes hard things easier"},
+		{Kind: KindScripture, Reference: "2 Samuel 3:1 HCSB", Verse: "The war between the house of Saul"},
+		{Kind: KindBackTo, Ref: "Point 1"},
+		{Kind: KindPoint, Label: "Truth", Text: "Sin is a momentum killer"},
+		{Kind: KindBackTo, Ref: "Point 1", Trigger: "Not only that"},
+		// A sentence containing "back to" is continuation text, not a label.
+		{Kind: KindBackTo, Ref: "Title", Trigger: "David’s life serves as a powerful reminder” So they went back to Jerusalem."},
+		{Kind: KindBackTo, Ref: "Title"},
+	}
+	if !reflect.DeepEqual(entries, want) {
+		t.Errorf("entries mismatch\n got: %+v\nwant: %+v", entries, want)
+	}
+	if len(unrec) != 0 {
+		t.Errorf("unrecognized = %v", unrec)
+	}
+}

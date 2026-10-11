@@ -362,7 +362,11 @@ func BuildSlides(st *style.Profile, entries []parse.Entry, name string, opt Slid
 			rep.SkippedImages = append(rep.SkippedImages, e.Text)
 		case parse.KindBackTo:
 			if idx, ok := byLabel[strings.ToLower(e.Ref)]; ok {
-				duplicate(idx, e.Trigger)
+				label := e.Trigger
+				if label == "" {
+					label = "Back to " + e.Ref
+				}
+				duplicate(idx, label)
 			} else {
 				rep.UnresolvedBackTo = append(rep.UnresolvedBackTo, "Back to "+e.Ref)
 			}
