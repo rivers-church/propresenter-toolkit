@@ -60,10 +60,11 @@ var (
 	//   "Ephesians 2:1-10 (NIV)"
 	//   "1 Samuel 17:1-5,8-16,24-26,31-37 (NIV)"
 	//   "2 Samuel 3:1 (HCSB) says:"
+	//   "1 Samuel 7:5-6 (NIV) it says:"
 	scriptureRE = regexp.MustCompile(`^([1-3]?\s?[A-Za-z][A-Za-z ]*?)\s+` +
 		`(\d+:\d+(?:\s*[-–]\s*\d+(?::\d+)?)?` + // 17:1, 17:1-5, 3:1–4:2
 		`(?:\s*,\s*\d+(?::\d+)?(?:\s*[-–]\s*\d+(?::\d+)?)?)*)` + // ,8-16 ,24
-		`\s*\(?([A-Za-z]{2,6})?\)?(?:\s+says)?\s*:?$`)
+		`\s*\(?([A-Za-z]{2,6})?\)?(?:\s+(?:it\s+)?says)?\s*:?$`)
 	pointRE = regexp.MustCompile(`(?i)^(SUB\s?POINT|POINT|CONDITION|DRIVEN)\s+(\d+)\s*(?::\s*(.*)|\s+(.+))$`)
 	// Any other ALL-CAPS label, e.g. "TRUTH: Sin is a momentum killer".
 	capsLabelRE = regexp.MustCompile(`^([A-Z]{3,})(?:\s+(\d+))?\s*:\s*(.+)$`)
@@ -71,13 +72,14 @@ var (
 	// line (which may be a non-biblical source such as "African Proverb").
 	scriptureMarkerRE = regexp.MustCompile(`(?i)^Scripture\s*:\s*$`)
 	titleRE           = regexp.MustCompile(`(?i)^Title\s*:\s*(.+)$`)
-	imageRE           = regexp.MustCompile(`(?i)^Image\s*:\s*(.+)$`)
+	// "Image: ..." or a short description before it ("Memorial stone image: ...").
+	imageRE = regexp.MustCompile(`(?i)^(?:\S+\s+){0,3}image\s*:\s*(.+)$`)
 	// "Back to Point 1 when I say: …" (any label), or the short forms
 	// "Back to Point 1" and "Back to Title: “…”". The short form only
 	// accepts Title or a numbered label, so verse text such as "back to
 	// Jerusalem" isn't mistaken for one.
 	backToRE          = regexp.MustCompile(`(?i)^Back to (.+?) when I say\s*:\s*(.*)$`)
-	backToShortRE     = regexp.MustCompile(`^Back to ((?i:title)|[A-Za-z]+ \d+)\s*(?::\s*(.*))?$`)
+	backToShortRE     = regexp.MustCompile(`^Back to ((?i:title)|[A-Za-z]+ \d+)\s*(?::\s*(.*)|\.)?$`)
 	leadingVerseNumRE = regexp.MustCompile(`^\d{1,3}\s+`)
 	verseNumRE        = regexp.MustCompile(`^\d{1,3}$`)
 	spacesRE          = regexp.MustCompile(`\s+`)
@@ -158,6 +160,12 @@ func Notes(rawLines []string) (entries []Entry, unrecognized []string) {
 			i = next
 			continue
 		}
+		if m := backToShortRE.FindStringSubmatch(line); m != nil {
+			extra, next := continuation(i + 1)
+			entries = append(entries, Entry{Kind: KindBackTo, Ref: capitalizeRef(m[1]), Trigger: cleanTrigger(join(m[2], extra))})
+			i = next
+			continue
+		}
 		if m := pointRE.FindStringSubmatch(line); m != nil {
 			extra, next := continuation(i + 1)
 			label := capitalize(strings.ReplaceAll(m[1], " ", "")) + " " + m[2]
@@ -212,6 +220,16 @@ func Notes(rawLines []string) (entries []Entry, unrecognized []string) {
 func cleanVerse(v string) string {
 	v = strings.TrimSpace(spacesRE.ReplaceAllString(v, " "))
 	return leadingVerseNumRE.ReplaceAllString(v, "")
+}
+
+// cleanTrigger strips the quotes people put around a trigger phrase.
+func cleanTrigger(t string) string {
+	return strings.TrimSpace(strings.Trim(strings.TrimSpace(t), "“”\""))
+}
+
+// capitalizeRef normalises "POINT 2" / "title" to "Point 2" / "Title".
+func capitalizeRef(r string) string {
+	return capitalize(strings.ReplaceAll(strings.Join(strings.Fields(r), " "), "SUB POINT", "SUBPOINT"))
 }
 
 func scriptureRef(m []string) string {

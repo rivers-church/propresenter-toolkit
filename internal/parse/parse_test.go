@@ -176,3 +176,44 @@ func TestNotesLooserFormats(t *testing.T) {
 		t.Errorf("unrecognized = %v", unrec)
 	}
 }
+
+// Layout taken from a real Pages export: scripture with "it says:", comma
+// verse lists, a described image, and "Back to" lines without "when I say".
+func TestNotesPagesOutline(t *testing.T) {
+	entries, unrec := Notes([]string{
+		"IF THESE WALLS COULD TALK -", "Notes",
+		"Title: If These Walls Could Talk",
+		"Memorial stone image: “They were often around", "750kg”",
+		"Back to Title: “Today is an Ebenezer moment”",
+		"POINT 2: Recommitment",
+		"1 Samuel 7:5-6 (NIV) it says:",
+		"5", "Then Samuel said, “Assemble all Israel”",
+		"Back to Point 2",
+		"Back to Title: “As we come to a close”",
+		"Matthew 12:9-10,13 (NIV)",
+		"Going on from that place",
+		"Back to Title.",
+	})
+	if len(unrec) != 0 {
+		t.Errorf("unrecognized = %q", unrec)
+	}
+	want := []Entry{
+		{Kind: KindTitle, Text: "If These Walls Could Talk"},
+		{Kind: KindImage, Text: "“They were often around 750kg”"},
+		{Kind: KindBackTo, Ref: "Title", Trigger: "Today is an Ebenezer moment"},
+		{Kind: KindPoint, Label: "Point 2", Text: "Recommitment"},
+		{Kind: KindScripture, Reference: "1 Samuel 7:5-6 NIV", Verse: "Then Samuel said, “Assemble all Israel”"},
+		{Kind: KindBackTo, Ref: "Point 2"},
+		{Kind: KindBackTo, Ref: "Title", Trigger: "As we come to a close"},
+		{Kind: KindScripture, Reference: "Matthew 12:9-10,13 NIV", Verse: "Going on from that place"},
+		{Kind: KindBackTo, Ref: "Title"},
+	}
+	if len(entries) != len(want) {
+		t.Fatalf("got %d entries %+v, want %d", len(entries), entries, len(want))
+	}
+	for i := range want {
+		if entries[i] != want[i] {
+			t.Errorf("entry %d = %+v, want %+v", i, entries[i], want[i])
+		}
+	}
+}
