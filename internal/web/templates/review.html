@@ -26,7 +26,7 @@
   <thead><tr><th>#</th><th>Type</th><th>Content</th><th></th></tr></thead>
   <tbody>
     {{range $i, $row := .Data.Rows}}
-    <tr>
+    <tr{{if $row.Image}} class="image-row"{{end}}>
       <td class="num">{{inc $i}}</td>
       <td class="kind">{{$row.Kind}}</td>
       <td>{{$row.Text}}</td>

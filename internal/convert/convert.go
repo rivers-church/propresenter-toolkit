@@ -55,6 +55,9 @@ type Job struct {
 type Row struct {
 	Kind string
 	Text string
+	// Image marks an "Image:" line, which isn't generated; the review page
+	// highlights it so it's noticed without a separate warning.
+	Image bool
 }
 
 // defaultBox matches the Message template: Arial Bold 135pt in a
@@ -121,7 +124,7 @@ func (j *Job) Rows() []Row {
 	}
 	for _, e := range j.Entries {
 		k, t := e.Summary()
-		rows = append(rows, Row{Kind: k, Text: t})
+		rows = append(rows, Row{Kind: k, Text: t, Image: e.Kind == parse.KindImage})
 	}
 	return rows
 }
@@ -154,7 +157,7 @@ func (j *Job) Warnings() []string {
 	if j.Mode == style.KindSlides {
 		// Dry-run the "Back to" and image logic so problems show up here.
 		seen := map[string]bool{"title": false}
-		var images, unresolved []string
+		var unresolved []string
 		for _, e := range j.Entries {
 			switch e.Kind {
 			case parse.KindTitle:
@@ -163,15 +166,13 @@ func (j *Job) Warnings() []string {
 				seen[strings.ToLower(e.Label)] = true
 			case parse.KindScripture:
 				seen[strings.ToLower(e.Reference)] = true
-			case parse.KindImage:
-				images = append(images, e.Text)
 			case parse.KindBackTo:
 				if !seen[strings.ToLower(e.Ref)] {
 					unresolved = append(unresolved, "Back to "+e.Ref)
 				}
 			}
 		}
-		w = append(w, pro.Report{SkippedImages: images, UnresolvedBackTo: unresolved}.Warnings()...)
+		w = append(w, pro.Report{UnresolvedBackTo: unresolved}.Warnings()...)
 	}
 	return w
 }

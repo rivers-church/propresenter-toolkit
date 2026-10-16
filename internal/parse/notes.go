@@ -44,7 +44,7 @@ func (e Entry) Summary() (kind, text string) {
 	case KindScripture:
 		return "Scripture", e.Reference + ": " + truncate(e.Verse, 100)
 	case KindImage:
-		return "Image (skipped)", e.Text
+		return "Image (add manually)", e.Text
 	case KindBackTo:
 		if e.Trigger == "" {
 			return "Back to " + e.Ref, "(same slide again)"

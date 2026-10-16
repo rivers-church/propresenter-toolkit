@@ -180,3 +180,31 @@ func TestBasicAuth(t *testing.T) {
 		t.Errorf("with credentials: status %d", resp.StatusCode)
 	}
 }
+
+// "Image:" rows are flagged in the table itself rather than in a notice at
+// the top of the page.
+func TestReviewHighlightsImageRows(t *testing.T) {
+	ts, c := newTestServer(t, Config{})
+	pdf := testpdf.Build([]testpdf.Line{
+		{testpdf.Regular("Title: The Wall")},
+		{testpdf.Regular("Image: A memorial stone")},
+		{testpdf.Regular("POINT 1: Remember")},
+	})
+	var styleName string
+	for _, data := range style.Defaults() {
+		if p, _ := style.Parse(data); p.Kind == style.KindSlides {
+			styleName = p.Name
+		}
+	}
+	resp := upload(t, c, ts.URL+"/convert", map[string]string{"mode": "slides", "style_slides": styleName, "name": "x"}, "pdf", "n.pdf", pdf)
+	html := body(t, resp)
+	if !strings.Contains(html, `class="image-row"`) || !strings.Contains(html, "Image (add manually)") {
+		t.Errorf("image row not highlighted/labelled:\n%s", html)
+	}
+	if strings.Contains(html, "Images skipped") || strings.Contains(html, "class=\"flash warn\"") {
+		t.Errorf("unexpected notice at the top of the review page")
+	}
+	if n := strings.Count(html, `class="image-row"`); n != 1 {
+		t.Errorf("%d image rows, want 1", n)
+	}
+}
