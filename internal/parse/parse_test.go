@@ -217,3 +217,33 @@ func TestNotesPagesOutline(t *testing.T) {
 		}
 	}
 }
+
+func TestNotesQuote(t *testing.T) {
+	lines := []string{
+		"Image: “looks completely different”",
+		"Friedrich August Tholuck quote:",
+		"“Though all preachers on earth should grow silent,",
+		"the heavens above will never cease.”",
+		"Romans 1:20 NLT",
+		"For ever since the world was created",
+	}
+	got, unrec := Notes(lines)
+	want := []Entry{
+		{Kind: KindImage, Text: "“looks completely different”"},
+		{Kind: KindScripture, Reference: "Friedrich August Tholuck", Verse: "“Though all preachers on earth should grow silent, the heavens above will never cease.”"},
+		{Kind: KindScripture, Reference: "Romans 1:20 NLT", Verse: "For ever since the world was created"},
+	}
+	if !reflect.DeepEqual(got, want) || len(unrec) != 0 {
+		t.Errorf("got %+v (unrecognized %v)", got, unrec)
+	}
+}
+
+func TestNotesImageStopsAtLineBreak(t *testing.T) {
+	got, unrec := Notes([]string{"Image: “looks completely different”", "stray line"})
+	if len(got) != 1 || got[0].Text != "“looks completely different”" {
+		t.Errorf("got %+v", got)
+	}
+	if !reflect.DeepEqual(unrec, []string{"stray line"}) {
+		t.Errorf("unrecognized = %v", unrec)
+	}
+}

@@ -74,6 +74,10 @@ var (
 	titleRE           = regexp.MustCompile(`(?i)^Title\s*:\s*(.+)$`)
 	// "Image: ..." or a short description before it ("Memorial stone image: ...").
 	imageRE = regexp.MustCompile(`(?i)^(?:\S+\s+){0,3}image\s*:\s*(.+)$`)
+	// "Friedrich August Tholuck quote:" introduces a quotation, shown like
+	// scripture with the author as its reference. The quote may follow on
+	// the same line or on the lines below.
+	quoteRE = regexp.MustCompile(`(?i)^((?:\S+\s+){0,5}?\S+)\s+quote\s*:\s*(.*)$`)
 	// "Back to Point 1 when I say: …" (any label), or the short forms
 	// "Back to Point 1" and "Back to Title: “…”". The short form only
 	// accepts Title or a numbered label, so verse text such as "back to
@@ -86,7 +90,7 @@ var (
 )
 
 func isLabelLine(s string) bool {
-	return scriptureMarkerRE.MatchString(s) || pointRE.MatchString(s) || titleRE.MatchString(s) || imageRE.MatchString(s) ||
+	return scriptureMarkerRE.MatchString(s) || quoteRE.MatchString(s) || pointRE.MatchString(s) || titleRE.MatchString(s) || imageRE.MatchString(s) ||
 		backToRE.MatchString(s) || backToShortRE.MatchString(s) || scriptureRE.MatchString(s) || isCapsLabel(s)
 }
 
@@ -141,8 +145,22 @@ func Notes(rawLines []string) (entries []Entry, unrecognized []string) {
 			continue
 		}
 		if m := imageRE.FindStringSubmatch(line); m != nil {
+			// An image description ends at its line break, so what follows
+			// is left for the next label or reported as unrecognized. The
+			// exception is a quoted trigger that wraps: keep reading until
+			// its closing quote.
+			text := m[1]
+			i++
+			for strings.Count(text, "“") > strings.Count(text, "”") && i < n && !isLabelLine(lines[i]) {
+				text = join(text, lines[i])
+				i++
+			}
+			entries = append(entries, Entry{Kind: KindImage, Text: text})
+			continue
+		}
+		if m := quoteRE.FindStringSubmatch(line); m != nil {
 			extra, next := continuation(i + 1)
-			entries = append(entries, Entry{Kind: KindImage, Text: join(m[1], extra)})
+			entries = append(entries, Entry{Kind: KindScripture, Reference: m[1], Verse: cleanVerse(join(m[2], extra))})
 			i = next
 			continue
 		}
