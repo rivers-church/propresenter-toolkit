@@ -75,16 +75,17 @@ var (
 	// "Image: ..." or a short description before it ("Memorial stone image: ...").
 	imageRE = regexp.MustCompile(`(?i)^(?:\S+\s+){0,3}image\s*:\s*(.+)$`)
 	// "Friedrich August Tholuck quote:" introduces a quotation, shown like
-	// scripture with the author as its reference. The quote may follow on
+	// scripture with the author as its reference. The colon is optional
+	// ("John Ortberg quote" on a line of its own); the quote may follow on
 	// the same line or on the lines below.
-	quoteRE = regexp.MustCompile(`(?i)^((?:\S+\s+){0,5}?\S+)\s+quote\s*:\s*(.*)$`)
+	quoteRE = regexp.MustCompile(`(?i)^((?:\S+\s+){0,5}?\S+)\s+quote\s*(?::\s*(.*)|)$`)
 	// "Back to Point 1 when I say: …" (any label), or the short forms
 	// "Back to Point 1" and "Back to Title: “…”". The short form only
 	// accepts Title or a numbered label, so verse text such as "back to
 	// Jerusalem" isn't mistaken for one.
 	backToRE          = regexp.MustCompile(`(?i)^Back to (.+?) when I say\s*:\s*(.*)$`)
 	backToShortRE     = regexp.MustCompile(`^Back to ((?i:title)|[A-Za-z]+ \d+)\s*(?::\s*(.*)|\.)?$`)
-	leadingVerseNumRE = regexp.MustCompile(`^\d{1,3}\s+`)
+	leadingVerseNumRE = regexp.MustCompile(`^\d{1,3}(?:\s*[-–]\s*\d{1,3})?\s+`)
 	verseNumRE        = regexp.MustCompile(`^\d{1,3}$`)
 	spacesRE          = regexp.MustCompile(`\s+`)
 )
@@ -237,7 +238,10 @@ func Notes(rawLines []string) (entries []Entry, unrecognized []string) {
 // ("16 But Jesus..."), which isn't part of the text to display.
 func cleanVerse(v string) string {
 	v = strings.TrimSpace(spacesRE.ReplaceAllString(v, " "))
-	return leadingVerseNumRE.ReplaceAllString(v, "")
+	v = leadingVerseNumRE.ReplaceAllString(v, "")
+	// A verse range ("28-30") whose digits were dropped as superscripts
+	// leaves its hyphen behind.
+	return strings.TrimSpace(strings.TrimLeft(v, "-–"))
 }
 
 // cleanTrigger strips the quotes people put around a trigger phrase.

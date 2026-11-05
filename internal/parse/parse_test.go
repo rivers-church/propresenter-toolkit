@@ -247,3 +247,29 @@ func TestNotesImageStopsAtLineBreak(t *testing.T) {
 		t.Errorf("unrecognized = %v", unrec)
 	}
 }
+
+func TestNotesQuoteWithoutColon(t *testing.T) {
+	lines := []string{
+		"EMBRACING THE PACE OF",
+		"JESUS",
+		"Dallas Willard quote",
+		"“We will come to understand that our hurry is pride.”",
+		"Matthew 11:28-30 MSG",
+		"- “Are you tired?”",
+		"Back to Point 1",
+		"John Ortberg quote",
+		"“Hurry is a disordered heart.”",
+		"Back to Point 1",
+	}
+	got, unrec := Notes(lines)
+	want := []Entry{
+		{Kind: KindScripture, Reference: "Dallas Willard", Verse: "“We will come to understand that our hurry is pride.”"},
+		{Kind: KindScripture, Reference: "Matthew 11:28-30 MSG", Verse: "“Are you tired?”"},
+		{Kind: KindBackTo, Ref: "Point 1"},
+		{Kind: KindScripture, Reference: "John Ortberg", Verse: "“Hurry is a disordered heart.”"},
+		{Kind: KindBackTo, Ref: "Point 1"},
+	}
+	if !reflect.DeepEqual(got, want) || len(unrec) != 0 {
+		t.Errorf("got %+v (unrecognized %v)", got, unrec)
+	}
+}
