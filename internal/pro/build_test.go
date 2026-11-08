@@ -410,6 +410,9 @@ func TestBuildSlidesKeepsCapsAttributes(t *testing.T) {
 		attrs := el.GetText().GetAttributes()
 		var caps int
 		for _, ca := range attrs.GetCustomAttributes() {
+			if len(ca.ProtoReflect().GetUnknown()) > 0 {
+				t.Errorf("cue %d: the template's per-range font should not be carried over", i)
+			}
 			if ca.GetRange().GetStart() != 0 || int(ca.GetRange().GetEnd()) != len([]rune(plain)) {
 				t.Errorf("cue %d: custom attribute range %v doesn't cover %q", i, ca.GetRange(), plain)
 			}

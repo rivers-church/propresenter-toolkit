@@ -125,11 +125,11 @@ func slideParts(c *pb.Cue, minElements int) (*pb.Action, []*pb.Graphics_Element,
 	return a, els, nil
 }
 
-// fitCustomAttributes keeps the template's whole-text custom attributes (per-
-// range capitalisation and font, which is what makes ProPresenter actually
-// apply ALL CAPS to the text) and stretches them over the new text. Ranges
-// covering only part of the template's text belonged to that text and are
-// dropped.
+// fitCustomAttributes keeps the template's whole-text capitalisation
+// attributes (the per-range setting ProPresenter actually applies ALL CAPS
+// from) and stretches them over the new text. The per-range font is dropped,
+// so the text takes the text box's font like the RTF does, and ranges that
+// covered only part of the template's text belonged to that text.
 func fitCustomAttributes(attrs *pb.Graphics_Text_Attributes, text string) {
 	end := int32(len(utf16.Encode([]rune(text))))
 	var full int32
@@ -140,11 +140,14 @@ func fitCustomAttributes(attrs *pb.Graphics_Text_Attributes, text string) {
 	}
 	var keep []*pb.Graphics_Text_Attributes_CustomAttribute
 	for _, ca := range attrs.GetCustomAttributes() {
-		if r := ca.GetRange(); r != nil && r.Start == 0 && r.End == full {
-			c := proto.Clone(ca).(*pb.Graphics_Text_Attributes_CustomAttribute)
-			c.Range.End = end
-			keep = append(keep, c)
+		r := ca.GetRange()
+		if r == nil || r.Start != 0 || r.End != full || ca.GetCapitalization() == pb.Graphics_Text_Attributes_CustomAttribute_CAPITALIZATION_NONE {
+			continue
 		}
+		c := proto.Clone(ca).(*pb.Graphics_Text_Attributes_CustomAttribute)
+		c.ProtoReflect().SetUnknown(nil) // the per-range font
+		c.Range.End = end
+		keep = append(keep, c)
 	}
 	attrs.CustomAttributes = keep
 }
