@@ -1,6 +1,7 @@
 {{define "content"}}
 {{$token := .Data.Token}}
 {{$buttons := .Data.Buttons}}
+{{$picked := .Data.Picked}}
 <h1>New style · step 2</h1>
 <p class="lede">From <strong>{{.Data.File}}</strong>. For each role, click its button on the slide that should be copied.
   Any Audience Look already attached to that slide is captured too.</p>
@@ -48,7 +49,7 @@
         <form method="post" action="/styles/new/{{$token}}/capture">
           <input type="hidden" name="cue" value="{{$idx}}">
           <input type="hidden" name="role" value="{{.Role}}">
-          <button class="small" type="submit">{{.Label}}</button>
+          <button class="small{{if index $picked (printf "%s:%d" .Role $idx)}} picked{{end}}" type="submit">{{.Label}}</button>
         </form>
         {{end}}
       </td>

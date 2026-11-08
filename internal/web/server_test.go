@@ -93,6 +93,8 @@ func TestLearnStyleThenConvert(t *testing.T) {
 	resp, _ = c.PostForm(pick+"/capture", url.Values{"cue": {"0"}, "role": {"body"}})
 	if b := body(t, resp); !strings.Contains(b, "slide 1") {
 		t.Fatalf("capture didn't register: %s", b)
+	} else if n := strings.Count(b, `class="small picked"`); n != 1 {
+		t.Fatalf("want exactly one highlighted role button, got %d", n)
 	}
 	resp, _ = c.PostForm(pick+"/save", url.Values{"name": {"Test Style"}, "regular_color": {"#FFFFFF"}, "emphasis_color": {"#00FF00"}, "highlight_bold": {"on"}})
 	if b := body(t, resp); !strings.Contains(b, `Style &#34;Test Style&#34; saved.`) {

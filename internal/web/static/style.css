@@ -135,6 +135,8 @@ button:hover, .button:hover { background: var(--hover); border-color: var(--line
 .primary { background: var(--accent-fill); color: var(--accent-ink); border-color: var(--accent-edge); }
 .primary:hover { background: var(--accent-fill-hover); border-color: var(--accent); color: var(--accent-ink-hover); }
 .small { padding: 3px 10px; }
+/* The role button already chosen for this slide, as on the status pills. */
+.small.picked { background: var(--ok-bg); border-color: var(--accent-edge); color: var(--ok); }
 .danger { color: var(--danger); }
 .danger:hover { background: var(--danger-bg); border-color: var(--danger-line); color: var(--danger); }
 .actions { display: flex; gap: 10px; align-items: center; margin: 0 0 16px; flex-wrap: wrap; }

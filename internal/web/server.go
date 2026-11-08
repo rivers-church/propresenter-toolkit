@@ -426,8 +426,12 @@ func (s *Server) stylePick(w http.ResponseWriter, r *http.Request) {
 	}
 	s.mu.Lock()
 	var st []status
+	picked := map[string]bool{} // "role:cue index", to highlight chosen buttons
 	for _, b := range buttons {
 		idx, have := ss.picked[b.Role]
+		if have {
+			picked[fmt.Sprintf("%s:%d", b.Role, idx)] = true
+		}
 		look := ""
 		if l, ok := ss.looks[b.Role]; ok {
 			look = l.Name
@@ -444,6 +448,7 @@ func (s *Server) stylePick(w http.ResponseWriter, r *http.Request) {
 		"Cues":     pro.ListCues(ss.pres),
 		"Buttons":  buttons,
 		"Status":   st,
+		"Picked":   picked,
 		"Regular":  settings.Regular(),
 		"Emphasis": settings.Emphasis(),
 	})
