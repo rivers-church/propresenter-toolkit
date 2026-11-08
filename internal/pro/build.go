@@ -288,6 +288,11 @@ type SlideOptions struct {
 // used to turn an estimated line count into a box height.
 const lineHeightFactor = 1.15
 
+// verseBoxPadding is extra height (points) on a fitted verse box. Without
+// it ProPresenter clips the text: five lines come out at 288pt but need
+// about 303pt, which is also what the template's own five-line box has.
+const verseBoxPadding = 15
+
 // centerVertically sizes the verse box to the lines its text wraps to, then
 // moves it and the reference box, keeping their order and the gap between
 // them, so the pair sits in the vertical middle of the slide.
@@ -312,7 +317,7 @@ func centerVertically(st *style.Profile, a *pb.Action, ref, verse *pb.Graphics_E
 	if multiple <= 0 {
 		multiple = 1
 	}
-	height := float64(box.Lines(text))*box.FontSize*lineHeightFactor*multiple + m.GetTop() + m.GetBottom()
+	height := float64(box.Lines(text))*box.FontSize*lineHeightFactor*multiple + m.GetTop() + m.GetBottom() + verseBoxPadding
 
 	// A passage too long for the slide can't be made to fit; just keep the
 	// boxes on the slide.
