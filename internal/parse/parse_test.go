@@ -282,7 +282,7 @@ func TestSplitVerse(t *testing.T) {
 		t.Errorf("short verse split: %q", got)
 	}
 	long := strings.Repeat("He fed the five thousand with bread and fish and gave thanks; ", 4) +
-		"Then he sent the crowds away. “Go home,” he said.” They went."
+		"Then he sent the crowds away. “Go home!” he said. Why do you stay? They went."
 	parts := SplitVerse(long, box, 5)
 	if len(parts) < 2 {
 		t.Fatalf("expected a split, got %q", parts)
@@ -291,14 +291,24 @@ func TestSplitVerse(t *testing.T) {
 		if n := box.Lines(p); n > 5 {
 			t.Errorf("part has %d lines: %q", n, p)
 		}
-		if last := p[len(p)-1]; !strings.ContainsRune(".;”", rune(last)) && !strings.HasSuffix(p, "”") {
+		if last := p[len(p)-1]; !strings.ContainsRune(".;?!”", rune(last)) {
 			t.Errorf("part doesn't end at a full stop or semicolon: %q", p)
 		}
 	}
 	if strings.Join(parts, " ") != strings.Join(strings.Fields(long), " ") {
 		t.Errorf("text changed by splitting: %q", parts)
 	}
-	// No full stop or semicolon to cut at: kept whole.
+	// A question mark or exclamation mark is a cut point too.
+	qa := strings.Repeat("Why do you stay here today? ", 12) + strings.Repeat("Go now! ", 12)
+	for _, p := range SplitVerse(qa, box, 5) {
+		if !strings.HasSuffix(p, "?") && !strings.HasSuffix(p, "!") {
+			t.Errorf("part doesn't end at ? or !: %q", p)
+		}
+	}
+	if len(SplitVerse(qa, box, 5)) < 2 {
+		t.Error("expected ? and ! text to split")
+	}
+	// No full stop, semicolon, ? or ! to cut at: kept whole.
 	nocut := strings.Repeat("and he went on and on ", 40)
 	if got := SplitVerse(nocut, box, 5); len(got) != 1 {
 		t.Errorf("text with no cut point was split into %d", len(got))

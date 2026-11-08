@@ -7,7 +7,7 @@ import (
 )
 
 // SplitVerse splits a verse or quotation into parts that each wrap to at
-// most maxLines in box, cutting only after a full stop or semicolon (with
+// most maxLines in box, cutting only after a full stop, semicolon, question mark or exclamation mark (with
 // any closing quote or bracket that follows it). The parts are spread
 // evenly rather than filling each slide before starting the next. A
 // sentence too long for one slide on its own is kept whole, as there is no
@@ -28,14 +28,14 @@ func SplitVerse(text string, box metrics.Box, maxLines int) []string {
 	return parts
 }
 
-// verseUnits cuts text after each word that ends in "." or ";" (ignoring
+// verseUnits cuts text after each word that ends in ".", ";", "?" or "!" (ignoring
 // closing quotes and brackets after it).
 func verseUnits(text string) []string {
 	var out []string
 	var cur []string
 	for _, w := range strings.Fields(text) {
 		cur = append(cur, w)
-		if t := strings.TrimRight(w, "\"'”’)]"); t != "" && (t[len(t)-1] == '.' || t[len(t)-1] == ';') {
+		if t := strings.TrimRight(w, "\"'”’)]"); t != "" && strings.ContainsRune(".;?!", rune(t[len(t)-1])) {
 			out = append(out, strings.Join(cur, " "))
 			cur = nil
 		}
