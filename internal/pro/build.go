@@ -123,6 +123,17 @@ func slideParts(c *pb.Cue, minElements int) (*pb.Action, []*pb.Graphics_Element,
 	return a, els, nil
 }
 
+// labelColor returns the colour of the slide action's own label, so a style
+// captured from a .pro keeps the label colours its slides were given there.
+// A label with no colour (ProPresenter stores those as fully transparent)
+// gets fallback.
+func labelColor(a *pb.Action, fallback *pb.Color) *pb.Color {
+	if c := a.GetLabel().GetColor(); c != nil && c.GetAlpha() > 0 {
+		return c
+	}
+	return fallback
+}
+
 // withLabel sets a slide action's label text and color.
 func withLabel(a *pb.Action, text string, color *pb.Color) {
 	if a.Label == nil {
@@ -282,7 +293,7 @@ func BuildSlides(st *style.Profile, entries []parse.Entry, name string, opt Slid
 			return 0, fmt.Errorf("style %q %s template: %w", st.Name, role, err)
 		}
 		tmpl.Name = label
-		withLabel(action, label, labelRed)
+		withLabel(action, label, labelColor(action, labelRed))
 		els[0].Text.Attributes.CustomAttributes = nil
 		data, err := rtf.Plain(rtf.StyleFromElement(els[0]), color, text)
 		if err != nil {
@@ -302,7 +313,7 @@ func BuildSlides(st *style.Profile, entries []parse.Entry, name string, opt Slid
 			return 0, fmt.Errorf("style %q scripture template (needs a reference box and a verse box): %w", st.Name, err)
 		}
 		tmpl.Name = ref
-		withLabel(action, ref, labelWhite)
+		withLabel(action, ref, labelColor(action, labelWhite))
 		for i, text := range []string{ref, verse} {
 			els[i].Text.Attributes.CustomAttributes = nil
 			data, err := rtf.Plain(rtf.StyleFromElement(els[i]), color, text)
@@ -318,7 +329,7 @@ func BuildSlides(st *style.Profile, entries []parse.Entry, name string, opt Slid
 		cue := proto.Clone(b.p.Cues[src]).(*pb.Cue)
 		cue.Name = label
 		action := SlideAction(cue)
-		withLabel(action, label, labelWhite)
+		withLabel(action, label, labelColor(action, labelWhite))
 		finish(cue, action, style.RoleBackTo)
 	}
 

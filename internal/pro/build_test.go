@@ -4,6 +4,8 @@ import (
 	"strings"
 	"testing"
 
+	"google.golang.org/protobuf/proto"
+
 	"github.com/rivers-church/propresenter-toolkit/internal/parse"
 	"github.com/rivers-church/propresenter-toolkit/internal/pb"
 	"github.com/rivers-church/propresenter-toolkit/internal/pdftext"
@@ -242,6 +244,44 @@ func TestBuildSlidesDefaultCopies(t *testing.T) {
 		}
 		if got, want := p.GetCues()[i].GetIsEnabled(), w.look != def; got != want {
 			t.Errorf("cue %d enabled = %v, want %v", i, got, want)
+		}
+	}
+}
+
+func TestBuildSlidesKeepsTemplateLabelColors(t *testing.T) {
+	st := defaultStyle(t, style.KindSlides)
+	green := &pb.Color{Red: 0, Green: 0.502, Blue: 0, Alpha: 1}
+	cue, err := st.TemplateCue(style.RoleScripture)
+	if err != nil {
+		t.Fatal(err)
+	}
+	SlideAction(cue).Label.Color = green
+	if st.Templates[style.RoleScripture], err = proto.Marshal(cue); err != nil {
+		t.Fatal(err)
+	}
+	data, _, err := BuildSlides(st, []parse.Entry{
+		{Kind: parse.KindTitle, Text: "T"},
+		{Kind: parse.KindScripture, Reference: "John 1:1 NIV", Verse: "In the beginning"},
+		{Kind: parse.KindBackTo, Ref: "John 1:1 NIV"},
+		{Kind: parse.KindBackTo, Ref: "Title"},
+	}, "Colors", SlideOptions{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	p, err := Parse(data)
+	if err != nil {
+		t.Fatal(err)
+	}
+	// title (red from its template), scripture (green), and "Back to"
+	// copies inheriting their source's colour.
+	want := []*pb.Color{labelRed, green, green, labelRed}
+	cues := p.GetCues()
+	if len(cues) != len(want) {
+		t.Fatalf("got %d cues, want %d", len(cues), len(want))
+	}
+	for i, c := range cues {
+		if got := SlideAction(c).GetLabel().GetColor(); !proto.Equal(got, want[i]) {
+			t.Errorf("cue %d label colour = %v, want %v", i, got, want[i])
 		}
 	}
 }
