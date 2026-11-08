@@ -247,6 +247,27 @@ func TextBox(st *style.Profile) (metrics.Box, error) {
 	}, nil
 }
 
+// scriptureBox describes a style's scripture verse box, for estimating how
+// many lines a verse wraps to.
+func scriptureBox(st *style.Profile) (metrics.Box, error) {
+	tmpl, err := st.TemplateCue(style.RoleScripture)
+	if err != nil {
+		return metrics.Box{}, err
+	}
+	_, els, err := slideParts(tmpl, 2)
+	if err != nil {
+		return metrics.Box{}, err
+	}
+	el := els[1]
+	m := el.GetText().GetMargins()
+	attrs := el.GetText().GetAttributes()
+	return metrics.Box{
+		Width:    el.GetBounds().GetSize().GetWidth() - m.GetLeft() - m.GetRight(),
+		FontSize: attrs.GetFont().GetSize(),
+		AllCaps:  !st.Settings.CapsOff() && attrs.GetCapitalization() == pb.Graphics_Text_Attributes_CAPITALIZATION_ALL_CAPS,
+	}, nil
+}
+
 // ----------------------------------------------------------------- slides --
 
 // SlideOptions tune BuildSlides.
@@ -419,11 +440,21 @@ func BuildSlides(st *style.Profile, entries []parse.Entry, name string, opt Slid
 			byLabel[strings.ToLower(e.Label)] = idx
 			defaultCopy(idx)
 		case parse.KindScripture:
-			idx, err := addScripture(e.Reference, e.Verse)
-			if err != nil {
-				return nil, rep, err
+			// A long passage becomes several slides, each carrying the
+			// reference; "Back to" returns to the first.
+			parts := []string{e.Verse}
+			if box, err := scriptureBox(st); err == nil {
+				parts = parse.SplitVerse(e.Verse, box, st.Settings.ScriptureLines())
 			}
-			byLabel[strings.ToLower(e.Reference)] = idx
+			for n, part := range parts {
+				idx, err := addScripture(e.Reference, part)
+				if err != nil {
+					return nil, rep, err
+				}
+				if n == 0 {
+					byLabel[strings.ToLower(e.Reference)] = idx
+				}
+			}
 		case parse.KindImage:
 			rep.SkippedImages = append(rep.SkippedImages, e.Text)
 		case parse.KindBackTo:

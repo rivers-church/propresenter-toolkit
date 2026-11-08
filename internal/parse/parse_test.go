@@ -5,6 +5,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/rivers-church/propresenter-toolkit/internal/metrics"
 	"github.com/rivers-church/propresenter-toolkit/internal/pdftext"
 )
 
@@ -271,5 +272,35 @@ func TestNotesQuoteWithoutColon(t *testing.T) {
 	}
 	if !reflect.DeepEqual(got, want) || len(unrec) != 0 {
 		t.Errorf("got %+v (unrecognized %v)", got, unrec)
+	}
+}
+
+func TestSplitVerse(t *testing.T) {
+	box := metrics.Box{Width: 1440, FontSize: 50}
+	short := "For God so loved the world."
+	if got := SplitVerse(short, box, 5); !reflect.DeepEqual(got, []string{short}) {
+		t.Errorf("short verse split: %q", got)
+	}
+	long := strings.Repeat("He fed the five thousand with bread and fish and gave thanks; ", 4) +
+		"Then he sent the crowds away. “Go home,” he said.” They went."
+	parts := SplitVerse(long, box, 5)
+	if len(parts) < 2 {
+		t.Fatalf("expected a split, got %q", parts)
+	}
+	for _, p := range parts {
+		if n := box.Lines(p); n > 5 {
+			t.Errorf("part has %d lines: %q", n, p)
+		}
+		if last := p[len(p)-1]; !strings.ContainsRune(".;”", rune(last)) && !strings.HasSuffix(p, "”") {
+			t.Errorf("part doesn't end at a full stop or semicolon: %q", p)
+		}
+	}
+	if strings.Join(parts, " ") != strings.Join(strings.Fields(long), " ") {
+		t.Errorf("text changed by splitting: %q", parts)
+	}
+	// No full stop or semicolon to cut at: kept whole.
+	nocut := strings.Repeat("and he went on and on ", 40)
+	if got := SplitVerse(nocut, box, 5); len(got) != 1 {
+		t.Errorf("text with no cut point was split into %d", len(got))
 	}
 }

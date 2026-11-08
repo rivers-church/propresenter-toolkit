@@ -343,3 +343,48 @@ func TestBuildSlidesCentersScripturesVertically(t *testing.T) {
 		t.Errorf("without the option both boxes keep the template height, got %.1f and %.1f", h0, h1)
 	}
 }
+
+func TestBuildSlidesSplitsLongScripture(t *testing.T) {
+	st := defaultStyle(t, style.KindSlides)
+	box, err := scriptureBox(st)
+	if err != nil {
+		t.Fatal(err)
+	}
+	verse := strings.Repeat("Jesus took the loaves and gave thanks to God for the food; ", 12) + "They all ate."
+	data, _, err := BuildSlides(st, []parse.Entry{
+		{Kind: parse.KindScripture, Reference: "John 6:1-13 NIV", Verse: verse},
+		{Kind: parse.KindBackTo, Ref: "John 6:1-13 NIV", Trigger: "again"},
+	}, "Split", SlideOptions{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	p, err := Parse(data)
+	if err != nil {
+		t.Fatal(err)
+	}
+	cues := p.GetCues()
+	if len(cues) < 3 {
+		t.Fatalf("expected a split passage plus a Back to, got %d cues", len(cues))
+	}
+	var parts []string
+	for _, c := range cues[:len(cues)-1] {
+		els := SlideAction(c).GetSlide().GetPresentation().GetBaseSlide().GetElements()
+		if ref := rtf.PlainText(els[0].GetElement().GetText().GetRtfData()); ref != "John 6:1-13 NIV" {
+			t.Errorf("each slide should carry the reference, got %q", ref)
+		}
+		text := rtf.PlainText(els[1].GetElement().GetText().GetRtfData())
+		if n := box.Lines(text); n > 5 {
+			t.Errorf("slide has %d lines", n)
+		}
+		parts = append(parts, text)
+	}
+	if got := strings.Join(parts, " "); got != strings.Join(strings.Fields(verse), " ") {
+		t.Errorf("split changed the text: %q", got)
+	}
+	// "Back to" repeats the first part.
+	last := cues[len(cues)-1]
+	els := SlideAction(last).GetSlide().GetPresentation().GetBaseSlide().GetElements()
+	if got := rtf.PlainText(els[1].GetElement().GetText().GetRtfData()); got != parts[0] {
+		t.Errorf("Back to should copy the first slide: %q", got)
+	}
+}

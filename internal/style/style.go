@@ -63,6 +63,17 @@ type Settings struct {
 	ForceCapsOff  *bool           `json:"force_caps_off,omitempty"`
 	HighlightBold *bool           `json:"highlight_bold,omitempty"`
 	AudienceLooks map[string]Look `json:"audience_looks,omitempty"`
+	// ScriptureMaxLines is how many wrapped lines a scripture or quote
+	// slide may hold before it is split (default 5).
+	ScriptureMaxLines int `json:"scripture_max_lines,omitempty"`
+}
+
+// ScriptureLines returns the line limit for scripture and quote slides.
+func (s Settings) ScriptureLines() int {
+	if s.ScriptureMaxLines > 0 {
+		return s.ScriptureMaxLines
+	}
+	return 5
 }
 
 // Regular returns the normal text color, defaulting to white.
