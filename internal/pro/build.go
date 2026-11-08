@@ -123,6 +123,21 @@ func slideParts(c *pb.Cue, minElements int) (*pb.Action, []*pb.Graphics_Element,
 	return a, els, nil
 }
 
+// centerHorizontally moves each text box to the middle of the slide, keeping
+// its width, so a template whose boxes were nudged off-centre doesn't pass
+// the offset on to every slide built from it.
+func centerHorizontally(a *pb.Action, els []*pb.Graphics_Element) {
+	width := a.GetSlide().GetPresentation().GetBaseSlide().GetSize().GetWidth()
+	if width <= 0 {
+		return
+	}
+	for _, el := range els {
+		if b := el.GetBounds(); b.GetOrigin() != nil && b.GetSize() != nil {
+			b.Origin.X = (width - b.Size.Width) / 2
+		}
+	}
+}
+
 // labelColor returns the colour of the slide action's own label, so a style
 // captured from a .pro keeps the label colours its slides were given there.
 // A label with no colour (ProPresenter stores those as fully transparent)
@@ -313,6 +328,7 @@ func BuildSlides(st *style.Profile, entries []parse.Entry, name string, opt Slid
 			return 0, fmt.Errorf("style %q scripture template (needs a reference box and a verse box): %w", st.Name, err)
 		}
 		tmpl.Name = ref
+		centerHorizontally(action, els[:2])
 		withLabel(action, ref, labelColor(action, labelWhite))
 		for i, text := range []string{ref, verse} {
 			els[i].Text.Attributes.CustomAttributes = nil
