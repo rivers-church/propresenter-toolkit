@@ -333,6 +333,7 @@ func (s *Server) convertDownload(w http.ResponseWriter, r *http.Request) {
 	s.mu.Lock()
 	js.job.DefaultCopies = r.FormValue("default_copies") != ""
 	js.job.DisableCopies = js.job.DefaultCopies && r.FormValue("disable_copies") != ""
+	js.job.CenterVerses = r.FormValue("center_scriptures") != ""
 	data, _, err := js.job.Build(st)
 	s.mu.Unlock()
 	if err != nil {

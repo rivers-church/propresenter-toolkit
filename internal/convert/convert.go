@@ -47,6 +47,7 @@ type Job struct {
 	Colors        ColorMode           // prompts
 	DisableCopies bool                // slides: mark those copies disabled
 	DefaultCopies bool                // slides: also add Default-look copies of title/point slides
+	CenterVerses  bool                // slides: fit and vertically centre scripture slides
 	Entries       []parse.Entry       // Mode == slides
 	Unrecognized  []string            // slides: lines that matched no label
 }
@@ -189,7 +190,7 @@ func (j *Job) Build(st *style.Profile) ([]byte, pro.Report, error) {
 		data, err := pro.BuildPrompts(st, j.Prompts, j.Name, pro.PromptOptions{PDFColors: j.PDFColors()})
 		return data, pro.Report{}, err
 	}
-	return pro.BuildSlides(st, j.Entries, j.Name, pro.SlideOptions{DefaultCopies: j.DefaultCopies, DisableCopies: j.DisableCopies})
+	return pro.BuildSlides(st, j.Entries, j.Name, pro.SlideOptions{DefaultCopies: j.DefaultCopies, DisableCopies: j.DisableCopies, CenterScriptures: j.CenterVerses})
 }
 
 // FileName turns a presentation name into a safe .pro file name.

@@ -3,6 +3,7 @@ package pro
 import (
 	"errors"
 	"fmt"
+	"math"
 	"strings"
 
 	"github.com/google/uuid"
@@ -257,6 +258,57 @@ type SlideOptions struct {
 	// DisableCopies marks those copies disabled, so ProPresenter greys
 	// them out and skips them when stepping through the presentation.
 	DisableCopies bool
+	// CenterScriptures fits the verse box to its text and centres the
+	// verse and reference boxes together, vertically, on the slide.
+	CenterScriptures bool
+}
+
+// lineHeightFactor is Arial's line height as a multiple of the font size,
+// used to turn an estimated line count into a box height.
+const lineHeightFactor = 1.15
+
+// centerVertically sizes the verse box to the lines its text wraps to, then
+// moves it and the reference box, keeping their order and the gap between
+// them, so the pair sits in the vertical middle of the slide.
+func centerVertically(st *style.Profile, a *pb.Action, ref, verse *pb.Graphics_Element, text string) {
+	slideH := a.GetSlide().GetPresentation().GetBaseSlide().GetSize().GetHeight()
+	rb, vb := ref.GetBounds(), verse.GetBounds()
+	if slideH <= 0 || rb.GetOrigin() == nil || rb.GetSize() == nil || vb.GetOrigin() == nil || vb.GetSize() == nil {
+		return
+	}
+	tx := verse.GetText()
+	m := tx.GetMargins()
+	attrs := tx.GetAttributes()
+	box := metrics.Box{
+		Width:    vb.Size.Width - m.GetLeft() - m.GetRight(),
+		FontSize: attrs.GetFont().GetSize(),
+		AllCaps:  !st.Settings.CapsOff() && attrs.GetCapitalization() == pb.Graphics_Text_Attributes_CAPITALIZATION_ALL_CAPS,
+	}
+	if box.Width <= 0 || box.FontSize <= 0 {
+		return
+	}
+	multiple := attrs.GetParagraphStyle().GetLineHeightMultiple()
+	if multiple <= 0 {
+		multiple = 1
+	}
+	height := float64(box.Lines(text))*box.FontSize*lineHeightFactor*multiple + m.GetTop() + m.GetBottom()
+
+	// A passage too long for the slide can't be made to fit; just keep the
+	// boxes on the slide.
+	height = math.Min(height, slideH-rb.Size.Height)
+
+	// A verse box above the reference keeps its bottom edge (and the gap);
+	// one below keeps its top edge.
+	if vb.Origin.Y < rb.Origin.Y {
+		vb.Origin.Y += vb.Size.Height - height
+	}
+	vb.Size.Height = height
+
+	top := math.Min(vb.Origin.Y, rb.Origin.Y)
+	bottom := math.Max(vb.Origin.Y+vb.Size.Height, rb.Origin.Y+rb.Size.Height)
+	dy := (slideH-(bottom-top))/2 - top
+	vb.Origin.Y += dy
+	rb.Origin.Y += dy
 }
 
 // BuildSlides makes slides from a parsed notes outline, cloning the
@@ -314,6 +366,9 @@ func BuildSlides(st *style.Profile, entries []parse.Entry, name string, opt Slid
 		}
 		tmpl.Name = ref
 		withLabel(action, ref, labelColor(action, labelWhite))
+		if opt.CenterScriptures {
+			centerVertically(st, action, els[0], els[1], verse)
+		}
 		for i, text := range []string{ref, verse} {
 			els[i].Text.Attributes.CustomAttributes = nil
 			data, err := rtf.Plain(rtf.StyleFromElement(els[i]), color, text)

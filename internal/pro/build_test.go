@@ -1,6 +1,7 @@
 package pro
 
 import (
+	"math"
 	"strings"
 	"testing"
 
@@ -283,5 +284,62 @@ func TestBuildSlidesKeepsTemplateLabelColors(t *testing.T) {
 		if got := SlideAction(c).GetLabel().GetColor(); !proto.Equal(got, want[i]) {
 			t.Errorf("cue %d label colour = %v, want %v", i, got, want[i])
 		}
+	}
+}
+
+func TestBuildSlidesCentersScripturesVertically(t *testing.T) {
+	st := defaultStyle(t, style.KindSlides)
+	short := "For God so loved the world."
+	long := strings.Repeat("For God so loved the world that he gave his one and only Son. ", 6)
+	build := func(center bool) *pb.Presentation {
+		data, _, err := BuildSlides(st, []parse.Entry{
+			{Kind: parse.KindScripture, Reference: "John 3:16 NIV", Verse: short},
+			{Kind: parse.KindScripture, Reference: "John 3:16 NIV", Verse: long},
+			{Kind: parse.KindScripture, Reference: "John 3", Verse: strings.Repeat(long, 8)},
+		}, "V", SlideOptions{CenterScriptures: center})
+		if err != nil {
+			t.Fatal(err)
+		}
+		p, err := Parse(data)
+		if err != nil {
+			t.Fatal(err)
+		}
+		return p
+	}
+	geom := func(c *pb.Cue) (slideH, top, bottom, verseH float64) {
+		bs := SlideAction(c).GetSlide().GetPresentation().GetBaseSlide()
+		els := bs.GetElements()
+		top, bottom = 1e9, -1e9
+		for _, e := range els[:2] {
+			b := e.GetElement().GetBounds()
+			top = math.Min(top, b.GetOrigin().GetY())
+			bottom = math.Max(bottom, b.GetOrigin().GetY()+b.GetSize().GetHeight())
+		}
+		return bs.GetSize().GetHeight(), top, bottom, els[1].GetElement().GetBounds().GetSize().GetHeight()
+	}
+
+	var heights []float64
+	for i, c := range build(true).GetCues() {
+		slideH, top, bottom, h := geom(c)
+		if d := (top + bottom) / 2; math.Abs(d-slideH/2) > 0.5 {
+			t.Errorf("cue %d: group centre %.1f, want %.1f", i, d, slideH/2)
+		}
+		heights = append(heights, h)
+	}
+	for i, c := range build(true).GetCues()[2:] {
+		slideH, top, bottom, _ := geom(c)
+		if top < -0.01 || bottom > slideH+0.01 {
+			t.Errorf("overlong passage %d runs off the slide: %.1f..%.1f of %.1f", i, top, bottom, slideH)
+		}
+	}
+	if heights[1] <= heights[0] {
+		t.Errorf("a longer verse should get a taller box: %v", heights)
+	}
+
+	// Off by default: the template's own geometry is kept.
+	_, _, _, h0 := geom(build(false).GetCues()[0])
+	_, _, _, h1 := geom(build(false).GetCues()[1])
+	if h0 != h1 {
+		t.Errorf("without the option both boxes keep the template height, got %.1f and %.1f", h0, h1)
 	}
 }
