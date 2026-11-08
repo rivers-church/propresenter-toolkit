@@ -388,3 +388,37 @@ func TestBuildSlidesSplitsLongScripture(t *testing.T) {
 		t.Errorf("Back to should copy the first slide: %q", got)
 	}
 }
+
+func TestBuildSlidesKeepsCapsAttributes(t *testing.T) {
+	st := defaultStyle(t, style.KindSlides)
+	text := "Embracing the Heart of Jesus"
+	data, _, err := BuildSlides(st, []parse.Entry{
+		{Kind: parse.KindTitle, Text: text},
+		{Kind: parse.KindPoint, Label: "Point 1", Text: "See what Jesus sees"},
+		{Kind: parse.KindBackTo, Ref: "Title"},
+	}, "Caps", SlideOptions{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	p, err := Parse(data)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for i, c := range p.GetCues() {
+		el := SlideAction(c).GetSlide().GetPresentation().GetBaseSlide().GetElements()[0].GetElement()
+		plain := rtf.PlainText(el.GetText().GetRtfData())
+		attrs := el.GetText().GetAttributes()
+		var caps int
+		for _, ca := range attrs.GetCustomAttributes() {
+			if ca.GetRange().GetStart() != 0 || int(ca.GetRange().GetEnd()) != len([]rune(plain)) {
+				t.Errorf("cue %d: custom attribute range %v doesn't cover %q", i, ca.GetRange(), plain)
+			}
+			if ca.GetCapitalization() == pb.Graphics_Text_Attributes_CustomAttribute_CAPITALIZATION_ALL_CAPS {
+				caps++
+			}
+		}
+		if attrs.GetCapitalization() == pb.Graphics_Text_Attributes_CAPITALIZATION_ALL_CAPS && caps == 0 {
+			t.Errorf("cue %d: box is ALL CAPS but the text has no capitalisation attribute", i)
+		}
+	}
+}

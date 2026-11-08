@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"math"
 	"strings"
+	"unicode/utf16"
 
 	"github.com/google/uuid"
 	"google.golang.org/protobuf/proto"
@@ -124,6 +125,30 @@ func slideParts(c *pb.Cue, minElements int) (*pb.Action, []*pb.Graphics_Element,
 	return a, els, nil
 }
 
+// fitCustomAttributes keeps the template's whole-text custom attributes (per-
+// range capitalisation and font, which is what makes ProPresenter actually
+// apply ALL CAPS to the text) and stretches them over the new text. Ranges
+// covering only part of the template's text belonged to that text and are
+// dropped.
+func fitCustomAttributes(attrs *pb.Graphics_Text_Attributes, text string) {
+	end := int32(len(utf16.Encode([]rune(text))))
+	var full int32
+	for _, ca := range attrs.GetCustomAttributes() {
+		if r := ca.GetRange(); r != nil && r.Start == 0 && r.End > full {
+			full = r.End
+		}
+	}
+	var keep []*pb.Graphics_Text_Attributes_CustomAttribute
+	for _, ca := range attrs.GetCustomAttributes() {
+		if r := ca.GetRange(); r != nil && r.Start == 0 && r.End == full {
+			c := proto.Clone(ca).(*pb.Graphics_Text_Attributes_CustomAttribute)
+			c.Range.End = end
+			keep = append(keep, c)
+		}
+	}
+	attrs.CustomAttributes = keep
+}
+
 // labelColor returns the colour of the slide action's own label, so a style
 // captured from a .pro keeps the label colours its slides were given there.
 // A label with no colour (ProPresenter stores those as fully transparent)
@@ -176,8 +201,8 @@ func BuildPrompts(st *style.Profile, slides []parse.PromptSlide, name string, op
 		attrs := el.GetText().GetAttributes()
 		if st.Settings.CapsOff() {
 			attrs.Capitalization = pb.Graphics_Text_Attributes_CAPITALIZATION_NONE
+			attrs.CustomAttributes = nil
 		}
-		attrs.CustomAttributes = nil
 
 		colors := []string{st.Settings.Regular()}
 		if highlight {
@@ -221,6 +246,9 @@ func BuildPrompts(st *style.Profile, slides []parse.PromptSlide, name string, op
 			return nil, err
 		}
 		el.Text.RtfData = data
+		if !st.Settings.CapsOff() {
+			fitCustomAttributes(attrs, rtf.PlainText(data))
+		}
 		b.add(cue)
 	}
 	return b.bytes()
@@ -372,12 +400,12 @@ func BuildSlides(st *style.Profile, entries []parse.Entry, name string, opt Slid
 		}
 		tmpl.Name = label
 		withLabel(action, label, labelColor(action, labelRed))
-		els[0].Text.Attributes.CustomAttributes = nil
 		data, err := rtf.Plain(rtf.StyleFromElement(els[0]), color, text)
 		if err != nil {
 			return 0, err
 		}
 		els[0].Text.RtfData = data
+		fitCustomAttributes(els[0].Text.Attributes, text)
 		return finish(tmpl, action, role), nil
 	}
 
@@ -396,12 +424,12 @@ func BuildSlides(st *style.Profile, entries []parse.Entry, name string, opt Slid
 			centerVertically(st, action, els[0], els[1], verse)
 		}
 		for i, text := range []string{ref, verse} {
-			els[i].Text.Attributes.CustomAttributes = nil
 			data, err := rtf.Plain(rtf.StyleFromElement(els[i]), color, text)
 			if err != nil {
 				return 0, err
 			}
 			els[i].Text.RtfData = data
+			fitCustomAttributes(els[i].Text.Attributes, text)
 		}
 		return finish(tmpl, action, style.RoleScripture), nil
 	}
